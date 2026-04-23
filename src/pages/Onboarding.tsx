@@ -197,7 +197,7 @@ export default function Onboarding() {
   /* -------------------- Render -------------------- */
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 md:p-8 bg-background relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-8 bg-background relative overflow-x-hidden">
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full gradient-primary opacity-20 blur-3xl animate-blob" />
       <div
         className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-success/40 blur-3xl animate-blob"
@@ -257,7 +257,7 @@ export default function Onboarding() {
           })}
         </div>
 
-        <Card className="p-6 md:p-10 rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95">
+        <Card className="p-4 sm:p-6 md:p-10 rounded-2xl sm:rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95 overflow-hidden">
           {/* Mobile progress bar */}
           <div className="sm:hidden mb-6">
             <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-2">
@@ -466,7 +466,7 @@ export default function Onboarding() {
                       setErrors((p) => ({ ...p, monthlyGoal: "" }));
                     }}
                     className={cn(
-                      "py-2.5 rounded-xl border-2 text-sm font-bold transition-bounce",
+                      "py-2.5 px-1 rounded-xl border-2 text-xs sm:text-sm font-bold transition-bounce truncate",
                       monthlyGoal === String(v)
                         ? "border-primary bg-primary-soft text-primary"
                         : "border-border hover:border-primary/40"
@@ -524,7 +524,7 @@ export default function Onboarding() {
                         Negócio
                       </p>
                       <p className="font-extrabold truncate">{businessName}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {cnpj || "CNPJ a definir"} · {phone || "Telefone a definir"}
                       </p>
                     </div>
@@ -540,11 +540,11 @@ export default function Onboarding() {
                       <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                         Meta mensal
                       </p>
-                      <p className="text-2xl font-extrabold text-primary">
+                      <p className="text-xl sm:text-2xl font-extrabold text-primary truncate">
                         {formatBRL(Number(monthlyGoal))}
                       </p>
                     </div>
-                    <Badge className="gradient-success text-success-foreground border-0 hidden sm:inline-flex">
+                    <Badge className="gradient-success text-success-foreground border-0 hidden sm:inline-flex shrink-0">
                       🚀 Vamos lá!
                     </Badge>
                   </div>
@@ -553,8 +553,8 @@ export default function Onboarding() {
 
               {/* Dashboard preview */}
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <LayoutDashboard className="h-4 w-4 text-primary" />
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <LayoutDashboard className="h-4 w-4 text-primary shrink-0" />
                   <p className="text-sm font-bold">Prévia do seu dashboard</p>
                   <Badge variant="secondary" className="text-[10px]">
                     personalizado
@@ -646,14 +646,15 @@ export default function Onboarding() {
 
           {/* Footer nav */}
           {step < 5 && (
-            <div className="flex items-center justify-between mt-8 pt-6 border-t">
+            <div className="flex items-center justify-between gap-2 mt-8 pt-6 border-t">
               <Button
                 variant="ghost"
                 onClick={prev}
                 disabled={step === 1 || loading}
-                className="rounded-xl"
+                className="rounded-xl shrink-0"
               >
-                <ArrowLeft className="h-4 w-4" /> Voltar
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Voltar</span>
               </Button>
               {step < 4 ? (
                 <Button variant="hero" onClick={next} className="rounded-xl">
@@ -664,13 +665,15 @@ export default function Onboarding() {
                   variant="success"
                   onClick={finish}
                   disabled={loading}
-                  className="rounded-xl"
+                  className="rounded-xl min-w-0"
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
-                      Confirmar e criar painel <Check className="h-4 w-4" />
+                      <span className="hidden sm:inline">Confirmar e criar painel</span>
+                      <span className="sm:hidden">Confirmar</span>
+                      <Check className="h-4 w-4" />
                     </>
                   )}
                 </Button>
