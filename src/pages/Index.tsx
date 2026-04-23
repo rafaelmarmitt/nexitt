@@ -174,6 +174,9 @@ const Index = () => {
         })}
       </div>
 
+      {/* Widgets específicos do tipo de negócio */}
+      <BusinessWidgets type={businessKey} />
+
       {/* Meta + Streak */}
       <div className="grid gap-5 lg:grid-cols-3 mb-6">
         <Card className="p-6 shadow-card lg:col-span-2 relative overflow-hidden border-primary/20 gradient-mesh">
