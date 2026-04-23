@@ -524,7 +524,7 @@ export default function Onboarding() {
                         Negócio
                       </p>
                       <p className="font-extrabold truncate">{businessName}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {cnpj || "CNPJ a definir"} · {phone || "Telefone a definir"}
                       </p>
                     </div>
