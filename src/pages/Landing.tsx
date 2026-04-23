@@ -22,8 +22,31 @@ const fade = {
 };
 
 const Landing = () => {
+  const prefersReducedMotion = useReducedMotion();
+
+  // Barra de progresso global do scroll
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.4 });
+
+  // Parallax no hero (mockup + blobs)
+  const heroRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroY = useTransform(heroProgress, [0, 1], [0, prefersReducedMotion ? 0 : -120]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.85], [1, 0.25]);
+  const blobY1 = useTransform(heroProgress, [0, 1], [0, prefersReducedMotion ? 0 : 180]);
+  const blobY2 = useTransform(heroProgress, [0, 1], [0, prefersReducedMotion ? 0 : -140]);
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased overflow-x-hidden">
+      {/* Barra de progresso de scroll */}
+      <motion.div
+        style={{ scaleX }}
+        className="fixed top-0 left-0 right-0 h-1 origin-left z-[60] gradient-primary"
+        aria-hidden
+      />
       {/* NAV */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/60">
         <nav className="container mx-auto flex items-center justify-between px-4 md:px-6 py-3">
