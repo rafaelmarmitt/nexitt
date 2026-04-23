@@ -5,8 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Box, Plus, AlertTriangle, TrendingDown, Search, Package, Filter } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { MockBadge } from "@/components/MockBadge";
 
-const itens = [
+interface ItemEstoque {
+  nome: string;
+  categoria: string;
+  estoque: number;
+  minimo: number;
+  preco: number;
+  status: "ok" | "baixo" | "esgotado";
+}
+
+const ITENS_MOCK: ItemEstoque[] = [
   { nome: "Bolo decorado tradicional", categoria: "Bolos", estoque: 12, minimo: 5, preco: 180, status: "ok" },
   { nome: "Brigadeiro gourmet (cento)", categoria: "Doces", estoque: 3, minimo: 5, preco: 90, status: "baixo" },
   { nome: "Embalagem kraft 20cm", categoria: "Embalagens", estoque: 240, minimo: 100, preco: 1.5, status: "ok" },
@@ -18,7 +31,48 @@ const itens = [
 
 const formatBRL = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
+const computeStatus = (qty: number, min: number): ItemEstoque["status"] => {
+  if (qty <= 0) return "esgotado";
+  if (qty < min) return "baixo";
+  return "ok";
+};
+
 export default function Estoque() {
+  const { user } = useAuth();
+  const [itens, setItens] = useState<ItemEstoque[]>(ITENS_MOCK);
+  const [isMock, setIsMock] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("products")
+        .select("name, category, price, inventory(quantity, min_quantity)")
+        .eq("user_id", user.id);
+      if (!data || data.length === 0) {
+        setItens(ITENS_MOCK);
+        setIsMock(true);
+        return;
+      }
+      const mapped: ItemEstoque[] = data.map((p: any) => {
+        const inv = Array.isArray(p.inventory) ? p.inventory[0] : p.inventory;
+        const qty = Number(inv?.quantity ?? 0);
+        const min = Number(inv?.min_quantity ?? 0);
+        return {
+          nome: p.name,
+          categoria: p.category || "Outros",
+          estoque: qty,
+          minimo: min,
+          preco: Number(p.price),
+          status: computeStatus(qty, min),
+        };
+      });
+      setItens(mapped);
+      setIsMock(false);
+    };
+    load();
+  }, [user]);
+
   const total = itens.reduce((s, i) => s + i.estoque * i.preco, 0);
   const baixos = itens.filter((i) => i.status !== "ok").length;
   const esgotados = itens.filter((i) => i.status === "esgotado").length;
@@ -33,6 +87,7 @@ export default function Estoque() {
         </Button>
       }
     >
+      <div className="mb-4"><MockBadge show={isMock} /></div>
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card className="p-5 shadow-card">
@@ -69,7 +124,6 @@ export default function Estoque() {
         </Card>
       </div>
 
-      {/* Filtros */}
       <Card className="p-4 mb-4 shadow-card flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -80,7 +134,6 @@ export default function Estoque() {
         </Button>
       </Card>
 
-      {/* Lista */}
       <Card className="shadow-card overflow-hidden">
         <ul className="divide-y">
           {itens.map((item, i) => {
