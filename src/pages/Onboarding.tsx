@@ -257,7 +257,7 @@ export default function Onboarding() {
           })}
         </div>
 
-        <Card className="p-6 md:p-10 rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95">
+        <Card className="p-4 sm:p-6 md:p-10 rounded-2xl sm:rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95 overflow-hidden">
           {/* Mobile progress bar */}
           <div className="sm:hidden mb-6">
             <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-2">
