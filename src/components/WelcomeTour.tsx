@@ -45,8 +45,10 @@ export function WelcomeTour() {
   const finish = async () => {
     if (!user) return;
     setSaving(true);
-    const updates: Record<string, unknown> = { welcome_tour_completed: true };
     const goalNum = Number(goal.replace(/\D/g, ""));
+    const updates: { welcome_tour_completed: boolean; monthly_goal?: number } = {
+      welcome_tour_completed: true,
+    };
     if (goalNum > 0) updates.monthly_goal = goalNum;
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
     setSaving(false);
