@@ -13,10 +13,13 @@ import {
 import { Download, Filter, Search, ArrowUpRight, ArrowDownRight, FileText, FileSpreadsheet } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { MockBadge } from "@/components/MockBadge";
 
 const distribuicao = [
   { name: "Fornecedores", value: 1850, color: "hsl(172 85% 38%)" },
@@ -33,7 +36,9 @@ const comparativo = [
   { cat: "Lucro", atual: 3824, anterior: 2924 },
 ];
 
-const transacoes = [
+interface Tx { data: string; desc: string; cat: string; tipo: "entrada" | "saida"; valor: number; cliente: string; }
+
+const TRANSACOES_MOCK: Tx[] = [
   { data: "15/06/2025", desc: "Venda Bolo Decorado", cat: "Vendas", tipo: "entrada", valor: 180, cliente: "Maria S." },
   { data: "14/06/2025", desc: "Insumos padaria", cat: "Fornecedores", tipo: "saida", valor: 320, cliente: "Atacadão" },
   { data: "13/06/2025", desc: "Encomenda doces", cat: "Vendas", tipo: "entrada", valor: 450, cliente: "João P." },
@@ -45,7 +50,46 @@ const transacoes = [
 ];
 
 const Relatorios = () => {
+  const { user } = useAuth();
   const [busca, setBusca] = useState("");
+  const [transacoes, setTransacoes] = useState<Tx[]>(TRANSACOES_MOCK);
+  const [isMock, setIsMock] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      const [{ data: sales }, { data: expenses }] = await Promise.all([
+        supabase.from("sales").select("sold_at, total, notes, customers(name)").eq("user_id", user.id).order("sold_at", { ascending: false }).limit(50),
+        supabase.from("expenses").select("expense_date, description, category, amount").eq("user_id", user.id).order("expense_date", { ascending: false }).limit(50),
+      ]);
+      const txs: Tx[] = [];
+      (sales || []).forEach((s: any) => txs.push({
+        data: new Date(s.sold_at).toLocaleDateString("pt-BR"),
+        desc: s.notes || "Venda",
+        cat: "Vendas",
+        tipo: "entrada",
+        valor: Number(s.total),
+        cliente: s.customers?.name || "—",
+      }));
+      (expenses || []).forEach((e: any) => txs.push({
+        data: new Date(e.expense_date).toLocaleDateString("pt-BR"),
+        desc: e.description,
+        cat: e.category || "Outros",
+        tipo: "saida",
+        valor: Number(e.amount),
+        cliente: "—",
+      }));
+      if (txs.length === 0) {
+        setTransacoes(TRANSACOES_MOCK);
+        setIsMock(true);
+      } else {
+        setTransacoes(txs);
+        setIsMock(false);
+      }
+    };
+    load();
+  }, [user]);
+
   const filtradas = transacoes.filter(
     (t) => t.desc.toLowerCase().includes(busca.toLowerCase()) || t.cliente.toLowerCase().includes(busca.toLowerCase())
   );
