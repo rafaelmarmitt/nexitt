@@ -2,11 +2,24 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar as CalendarIcon, Plus, Clock, User, Phone, MapPin, CheckCircle2 } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, Clock, User, Phone, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { BUSINESS_CONFIGS } from "@/lib/businessTypes";
+import { supabase } from "@/integrations/supabase/client";
+import { MockBadge } from "@/components/MockBadge";
 
-const agendamentos = [
+interface AgItem {
+  hora: string;
+  duracao: string;
+  cliente: string;
+  servico: string;
+  status: string;
+  valor: number;
+  telefone: string;
+}
+
+const AGENDAMENTOS_MOCK: AgItem[] = [
   { hora: "09:00", duracao: "1h", cliente: "Ana Paula", servico: "Manicure + Pedicure", status: "confirmado", valor: 80, telefone: "(11) 98765-4321" },
   { hora: "10:30", duracao: "45min", cliente: "Beatriz S.", servico: "Design de sobrancelha", status: "confirmado", valor: 50, telefone: "(11) 99876-1234" },
   { hora: "13:00", duracao: "2h", cliente: "Carla M.", servico: "Coloração + Corte", status: "pendente", valor: 220, telefone: "(11) 91234-5678" },
@@ -15,12 +28,46 @@ const agendamentos = [
 ];
 
 const semana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-
 const formatBRL = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const fmtDur = (min: number) => (min >= 60 ? `${Math.floor(min / 60)}h${min % 60 ? (min % 60) + "min" : ""}` : `${min}min`);
 
 export default function Agenda() {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const config = profile?.business_type ? BUSINESS_CONFIGS[profile.business_type] : null;
+  const [agendamentos, setAgendamentos] = useState<AgItem[]>(AGENDAMENTOS_MOCK);
+  const [isMock, setIsMock] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const end = new Date(); end.setHours(23, 59, 59, 999);
+      const { data } = await supabase
+        .from("appointments")
+        .select("scheduled_at, duration_minutes, service_name, status, price, customers(name, phone)")
+        .eq("user_id", user.id)
+        .gte("scheduled_at", start.toISOString())
+        .lte("scheduled_at", end.toISOString())
+        .order("scheduled_at", { ascending: true });
+      if (!data || data.length === 0) {
+        setAgendamentos(AGENDAMENTOS_MOCK);
+        setIsMock(true);
+        return;
+      }
+      setAgendamentos(data.map((a: any) => ({
+        hora: new Date(a.scheduled_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+        duracao: fmtDur(a.duration_minutes || 60),
+        cliente: a.customers?.name || "Cliente",
+        servico: a.service_name,
+        status: a.status,
+        valor: Number(a.price || 0),
+        telefone: a.customers?.phone || "",
+      })));
+      setIsMock(false);
+    };
+    load();
+  }, [user]);
+
   const totalDia = agendamentos.reduce((s, a) => s + a.valor, 0);
   const hoje = new Date().getDay();
 
@@ -34,7 +81,8 @@ export default function Agenda() {
         </Button>
       }
     >
-      {/* KPIs */}
+      <div className="mb-4"><MockBadge show={isMock} /></div>
+
       <div className="grid gap-4 sm:grid-cols-3 mb-6">
         <Card className="p-5 shadow-card">
           <div className="flex items-center gap-2 mb-1">
@@ -62,7 +110,6 @@ export default function Agenda() {
         </Card>
       </div>
 
-      {/* Week selector */}
       <Card className="p-4 mb-6 shadow-card">
         <div className="grid grid-cols-7 gap-2">
           {semana.map((d, i) => {
@@ -85,7 +132,6 @@ export default function Agenda() {
         </div>
       </Card>
 
-      {/* Lista do dia */}
       <Card className="p-5 shadow-card">
         <h2 className="text-base font-bold mb-4">Hoje · {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}</h2>
         <ul className="space-y-3">
@@ -113,9 +159,11 @@ export default function Agenda() {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground truncate">{a.servico}</p>
-                <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                  <Phone className="h-3 w-3" /> {a.telefone}
-                </p>
+                {a.telefone && (
+                  <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                    <Phone className="h-3 w-3" /> {a.telefone}
+                  </p>
+                )}
               </div>
               <div className="text-right shrink-0">
                 <p className="font-extrabold text-success-deep">{formatBRL(a.valor)}</p>
