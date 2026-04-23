@@ -1,5 +1,6 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import {
   MessageCircle, BarChart3, Receipt, FileText, Bell,
   ShieldCheck, Smartphone, Sparkles, ArrowRight, Check,
