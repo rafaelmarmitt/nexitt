@@ -466,7 +466,7 @@ export default function Onboarding() {
                       setErrors((p) => ({ ...p, monthlyGoal: "" }));
                     }}
                     className={cn(
-                      "py-2.5 rounded-xl border-2 text-sm font-bold transition-bounce",
+                      "py-2.5 px-1 rounded-xl border-2 text-xs sm:text-sm font-bold transition-bounce truncate",
                       monthlyGoal === String(v)
                         ? "border-primary bg-primary-soft text-primary"
                         : "border-border hover:border-primary/40"
