@@ -187,6 +187,7 @@ const Index = () => {
         </>
       }
     >
+      <div className="mb-4"><MockBadge show={isMock} /></div>
       {/* KPIs adaptativos */}
       <div className="grid gap-4 md:gap-5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 mb-6">
         {config.metrics.map((m, idx) => {
