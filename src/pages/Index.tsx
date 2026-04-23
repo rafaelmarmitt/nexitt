@@ -236,7 +236,7 @@ const Index = () => {
             />
           );
         })}
-      </div>
+      </section>
 
       {/* Widgets específicos do tipo de negócio */}
       <BusinessWidgets type={businessKey} />
