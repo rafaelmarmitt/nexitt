@@ -36,6 +36,34 @@ const notifications = [
   { title: "Bot conectado", desc: "WhatsApp online", time: "3 h" },
 ];
 
+function ThemeMenuItems() {
+  const { theme, setTheme } = useTheme();
+  const opts = [
+    { value: "light", label: "Claro", icon: Sun },
+    { value: "dark", label: "Escuro", icon: Moon },
+    { value: "system", label: "Sistema", icon: Monitor },
+  ] as const;
+  return (
+    <>
+      {opts.map((o) => {
+        const Icon = o.icon;
+        const active = theme === o.value;
+        return (
+          <DropdownMenuItem
+            key={o.value}
+            onSelect={(e) => { e.preventDefault(); setTheme(o.value); }}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <Icon className="h-4 w-4" />
+            <span className="flex-1">{o.label}</span>
+            {active && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+          </DropdownMenuItem>
+        );
+      })}
+    </>
+  );
+}
+
 export function DashboardLayout({ title, subtitle, actions, children }: Props) {
   const { profile, signOut } = useAuth();
   const displayName = profile?.full_name || profile?.business_name || "Usuário";
@@ -63,6 +91,7 @@ export function DashboardLayout({ title, subtitle, actions, children }: Props) {
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
+              <ThemeToggle className="hidden sm:inline-flex" />
               <Button variant="ghost" size="icon" aria-label="Ajuda" className="hidden sm:inline-flex">
                 <HelpCircle className="h-5 w-5" />
               </Button>
