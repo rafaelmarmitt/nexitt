@@ -25,16 +25,46 @@ import mascot from "@/assets/mascot.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const STEP_COUNT = 4;
 
 export function WelcomeTour() {
   const { profile, user, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<string>("");
   const [saving, setSaving] = useState(false);
+  const [navigating, setNavigating] = useState<null | "whatsapp" | "impostos">(null);
+
+  const completeTourAndGo = async (path: "/whatsapp" | "/impostos", key: "whatsapp" | "impostos") => {
+    if (!user || navigating || saving) return;
+    setNavigating(key);
+    const goalNum = Number(goal.replace(/\D/g, ""));
+    const updates: { welcome_tour_completed: boolean; monthly_goal?: number } = {
+      welcome_tour_completed: true,
+    };
+    if (goalNum > 0) updates.monthly_goal = goalNum;
+    const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
+    if (error) {
+      setNavigating(null);
+      toast.error("Não conseguimos abrir agora. Tente novamente.");
+      return;
+    }
+    await refreshProfile();
+    setOpen(false);
+    // pequena espera para o modal animar a saída antes de navegar
+    setTimeout(() => {
+      navigate(path);
+      setNavigating(null);
+      toast.success(
+        key === "whatsapp"
+          ? "Vamos conectar o seu WhatsApp 📲"
+          : "Aqui estão os seus impostos 📑",
+      );
+    }, 180);
+  };
 
   useEffect(() => {
     if (profile && profile.onboarding_completed && !(profile as any).welcome_tour_completed) {
