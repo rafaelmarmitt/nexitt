@@ -20,21 +20,52 @@ import {
   Sparkles,
   Copy,
   Receipt,
+  Loader2,
 } from "lucide-react";
 import mascot from "@/assets/mascot.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const STEP_COUNT = 4;
 
 export function WelcomeTour() {
   const { profile, user, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<string>("");
   const [saving, setSaving] = useState(false);
+  const [navigating, setNavigating] = useState<null | "whatsapp" | "impostos">(null);
+
+  const completeTourAndGo = async (path: "/whatsapp" | "/impostos", key: "whatsapp" | "impostos") => {
+    if (!user || navigating || saving) return;
+    setNavigating(key);
+    const goalNum = Number(goal.replace(/\D/g, ""));
+    const updates: { welcome_tour_completed: boolean; monthly_goal?: number } = {
+      welcome_tour_completed: true,
+    };
+    if (goalNum > 0) updates.monthly_goal = goalNum;
+    const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
+    if (error) {
+      setNavigating(null);
+      toast.error("Não conseguimos abrir agora. Tente novamente.");
+      return;
+    }
+    await refreshProfile();
+    setOpen(false);
+    // pequena espera para o modal animar a saída antes de navegar
+    setTimeout(() => {
+      navigate(path);
+      setNavigating(null);
+      toast.success(
+        key === "whatsapp"
+          ? "Vamos conectar o seu WhatsApp 📲"
+          : "Aqui estão os seus impostos 📑",
+      );
+    }, 180);
+  };
 
   useEffect(() => {
     if (profile && profile.onboarding_completed && !(profile as any).welcome_tour_completed) {
@@ -71,7 +102,7 @@ export function WelcomeTour() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !saving && setOpen(v)}>
+    <Dialog open={open} onOpenChange={(v) => !saving && !navigating && setOpen(v)}>
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden border-0 shadow-glow">
         <div className="gradient-mesh px-6 pt-6 pb-4 relative">
           <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-primary/20 blur-2xl" />
@@ -144,11 +175,23 @@ export function WelcomeTour() {
                   ))}
                 </ol>
 
-                <Button size="sm" className="w-full rounded-lg bg-whatsapp text-white hover:bg-whatsapp/90" asChild>
-                  <Link to="/whatsapp" onClick={() => setOpen(false)}>
-                    <MessageCircle className="h-4 w-4" /> Conectar agora
-                    <ArrowRight className="h-4 w-4 ml-auto" />
-                  </Link>
+                <Button
+                  size="sm"
+                  className="w-full rounded-lg bg-whatsapp text-white hover:bg-whatsapp/90 disabled:opacity-100"
+                  onClick={() => completeTourAndGo("/whatsapp", "whatsapp")}
+                  disabled={navigating !== null || saving}
+                  aria-label="Ir para a página de conexão do WhatsApp"
+                >
+                  {navigating === "whatsapp" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Abrindo página…
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="h-4 w-4" /> Conectar agora
+                      <ArrowRight className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
                 </Button>
               </div>
 
@@ -203,10 +246,23 @@ export function WelcomeTour() {
                     WhatsApp quando fizeres o pagamento ou atualizares aqui no painel —
                     nós cuidamos do resto.
                   </p>
-                  <Button size="sm" variant="outline" className="rounded-lg mt-2" asChild>
-                    <Link to="/impostos" onClick={() => setOpen(false)}>
-                      <Receipt className="h-3.5 w-3.5" /> Ver impostos
-                    </Link>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-lg mt-2"
+                    onClick={() => completeTourAndGo("/impostos", "impostos")}
+                    disabled={navigating !== null || saving}
+                    aria-label="Ir para a página de impostos"
+                  >
+                    {navigating === "impostos" ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo…
+                      </>
+                    ) : (
+                      <>
+                        <Receipt className="h-3.5 w-3.5" /> Ver impostos
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
