@@ -32,39 +32,35 @@ const STEP_COUNT = 4;
 
 export function WelcomeTour() {
   const { profile, user, refreshProfile } = useAuth();
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [navigating, setNavigating] = useState<null | "whatsapp" | "impostos">(null);
 
-  const completeTourAndGo = async (path: "/whatsapp" | "/impostos", key: "whatsapp" | "impostos") => {
-    if (!user || navigating || saving) return;
+  const openInNewTabAndAdvance = (
+    path: "/whatsapp" | "/impostos",
+    key: "whatsapp" | "impostos",
+    nextStep: number,
+  ) => {
+    if (navigating || saving) return;
     setNavigating(key);
-    const goalNum = Number(goal.replace(/\D/g, ""));
-    const updates: { welcome_tour_completed: boolean; monthly_goal?: number } = {
-      welcome_tour_completed: true,
-    };
-    if (goalNum > 0) updates.monthly_goal = goalNum;
-    const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
-    if (error) {
-      setNavigating(null);
-      toast.error("Não conseguimos abrir agora. Tente novamente.");
-      return;
-    }
-    await refreshProfile();
-    setOpen(false);
-    // pequena espera para o modal animar a saída antes de navegar
+    // Abre em outra aba para o usuário NÃO perder o onboarding
+    const win = window.open(path, "_blank", "noopener,noreferrer");
+    toast.success(
+      key === "whatsapp"
+        ? win
+          ? "Abrimos a página do WhatsApp em outra aba 📲 Continue o tour por aqui."
+          : "Permita pop-ups para abrirmos a página do WhatsApp."
+        : win
+          ? "Abrimos a página de impostos em outra aba 📑 Continue o tour por aqui."
+          : "Permita pop-ups para abrirmos a página de impostos.",
+    );
+    // Avança para o próximo passo do tour, mantendo o modal aberto
     setTimeout(() => {
-      navigate(path);
+      setStep(nextStep);
       setNavigating(null);
-      toast.success(
-        key === "whatsapp"
-          ? "Vamos conectar o seu WhatsApp 📲"
-          : "Aqui estão os seus impostos 📑",
-      );
-    }, 180);
+    }, 250);
   };
 
   useEffect(() => {
