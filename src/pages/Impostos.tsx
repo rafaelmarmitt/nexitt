@@ -49,14 +49,26 @@ const Impostos = () => {
     }
   }, [rows]);
 
+  // Data de cadastro do usuário (auth) — só mostramos DAS a partir desse mês
+  const signupDate = useMemo(() => {
+    return user?.created_at ? new Date(user.created_at) : null;
+  }, [user]);
+
   const months = useMemo(() => {
     return MESES_PT.map((nome, idx) => {
       const monthRef = buildMonthRef(idx, year);
       const row = byMonth.get(monthRef);
       const status = row ? computeStatus(row) : "pendente";
       return { idx, nome, monthRef, row, status };
+    }).filter(({ idx }) => {
+      if (!signupDate) return true;
+      const signupYear = signupDate.getFullYear();
+      const signupMonth = signupDate.getMonth();
+      if (year < signupYear) return false;
+      if (year > signupYear) return true;
+      return idx >= signupMonth;
     });
-  }, [byMonth, year]);
+  }, [byMonth, year, signupDate]);
 
   const stats = useMemo(() => {
     const pagos = months.filter((m) => m.status === "pago").length;
