@@ -20,6 +20,7 @@ import {
   Sparkles,
   Copy,
   Receipt,
+  Loader2,
 } from "lucide-react";
 import mascot from "@/assets/mascot.png";
 import { useAuth } from "@/contexts/AuthContext";
