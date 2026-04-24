@@ -11,10 +11,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Building2, Target, Save, Trophy, Award, Sparkles, Bell,
-  CreditCard, Lock, Camera
+  CreditCard, Lock
 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/CopyButton";
+import { AvatarUpload } from "@/components/AvatarUpload";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Perfil = () => {
   const [searchParams, setSearchParams] = useSearchParams();
