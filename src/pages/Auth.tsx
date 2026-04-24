@@ -188,14 +188,14 @@ export default function Auth() {
                     <Label htmlFor="login-email">E-mail</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="pl-9 h-11 rounded-xl" />
+                      <Input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required className="pl-9 h-11 rounded-xl" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="login-pwd">Senha</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="login-pwd" type={showPwd ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required className="pl-9 pr-10 h-11 rounded-xl" />
+                      <Input id="login-pwd" type={showPwd ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" required className="pl-9 pr-10 h-11 rounded-xl" />
                       <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                         {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
