@@ -725,38 +725,66 @@ export default function Onboarding() {
 
           {/* Footer nav */}
           {step < 5 && (
-            <div className="flex items-center justify-between gap-2 mt-8 pt-6 border-t">
-              <Button
-                variant="ghost"
-                onClick={prev}
-                disabled={step === 1 || loading}
-                className="rounded-xl shrink-0"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Voltar</span>
-              </Button>
-              {step < 4 ? (
-                <Button variant="hero" onClick={next} className="rounded-xl">
-                  Próximo <ArrowRight className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button
-                  variant="success"
-                  onClick={finish}
-                  disabled={loading}
-                  className="rounded-xl min-w-0"
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <span className="hidden sm:inline">Confirmar e criar painel</span>
-                      <span className="sm:hidden">Confirmar</span>
-                      <Check className="h-4 w-4" />
-                    </>
-                  )}
-                </Button>
+            <div className="mt-8 pt-6 border-t space-y-3">
+              {/* Mensagem de status do passo */}
+              {step < 4 && !stepValid && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center sm:justify-start">
+                  <HelpCircle className="h-3.5 w-3.5" />
+                  {step === 1 && "Escolha um tipo de negócio para continuar."}
+                  {step === 2 && "Preencha o nome do negócio para continuar."}
+                  {step === 3 && "Defina uma meta entre R$ 100 e R$ 81.000."}
+                </p>
               )}
+
+              <div className="flex items-center justify-between gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={prev}
+                  disabled={step === 1 || loading}
+                  className="rounded-xl shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Voltar</span>
+                </Button>
+
+                <div className="flex items-center gap-3">
+                  {step < 4 && stepValid && (
+                    <span className="hidden md:inline text-[11px] text-muted-foreground">
+                      Pressione <kbd className="px-1.5 py-0.5 rounded border bg-muted font-mono text-[10px]">Enter</kbd> para avançar
+                    </span>
+                  )}
+                  {step < 4 ? (
+                    <Button
+                      variant="hero"
+                      onClick={next}
+                      disabled={!stepValid}
+                      className="rounded-xl"
+                    >
+                      Próximo <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="success"
+                      onClick={finish}
+                      disabled={loading}
+                      className="rounded-xl min-w-0"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Criando seu painel...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="hidden sm:inline">Confirmar e criar painel</span>
+                          <span className="sm:hidden">Confirmar</span>
+                          <Check className="h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </Card>
