@@ -26,7 +26,7 @@ import mascot from "@/assets/mascot.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+
 
 const STEP_COUNT = 4;
 
