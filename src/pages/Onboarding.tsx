@@ -166,6 +166,25 @@ export default function Onboarding() {
     setStep((s) => Math.max(s - 1, 1));
   };
 
+  // Permite clicar no stepper para voltar a passos já completados (não pular adiante)
+  const goToStep = (target: number) => {
+    if (target < step) {
+      setErrors({});
+      setStep(target);
+    }
+  };
+
+  // Enter avança o passo (exceto em textarea)
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" && step < 4 && !loading) {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag !== "TEXTAREA" && tag !== "BUTTON") {
+        e.preventDefault();
+        next();
+      }
+    }
+  };
+
   const finish = async () => {
     if (!user || !businessType) return;
     setLoading(true);
