@@ -144,7 +144,7 @@ export function WelcomeTour() {
                   ))}
                 </ol>
 
-                <Button size="sm" variant="whatsapp" className="w-full rounded-lg" asChild>
+                <Button size="sm" className="w-full rounded-lg bg-whatsapp text-white hover:bg-whatsapp/90" asChild>
                   <Link to="/whatsapp" onClick={() => setOpen(false)}>
                     <MessageCircle className="h-4 w-4" /> Conectar agora
                     <ArrowRight className="h-4 w-4 ml-auto" />
