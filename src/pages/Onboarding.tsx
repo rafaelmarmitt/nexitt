@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import {
   Loader2, ArrowRight, ArrowLeft, Check, Sparkles, PartyPopper,
   Eye, Building2, Target, ShoppingBag, CheckCircle2, AlertCircle, LayoutDashboard,
+  HelpCircle,
 } from "lucide-react";
 import { BUSINESS_LIST, BUSINESS_CONFIGS, type BusinessType } from "@/lib/businessTypes";
 import mascot from "@/assets/mascot.png";
@@ -88,6 +89,25 @@ export default function Onboarding() {
     [businessType]
   );
 
+  // Validação reativa para habilitar/desabilitar botão "Próximo"
+  const stepValid = useMemo(() => {
+    if (step === 1) return !!businessType;
+    if (step === 2) {
+      return businessInfoSchema.safeParse({ businessName, cnpj, phone }).success;
+    }
+    if (step === 3) {
+      return goalSchema.safeParse({ monthlyGoal: Number(monthlyGoal) }).success;
+    }
+    return true;
+  }, [step, businessType, businessName, cnpj, phone, monthlyGoal]);
+
+  // Foco automático no primeiro campo de cada passo
+  const firstFieldRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    const t = setTimeout(() => firstFieldRef.current?.focus(), 100);
+    return () => clearTimeout(t);
+  }, [step]);
+
   /* -------------------- Validation per step -------------------- */
 
   const validateStep = (): boolean => {
@@ -144,6 +164,25 @@ export default function Onboarding() {
   const prev = () => {
     setErrors({});
     setStep((s) => Math.max(s - 1, 1));
+  };
+
+  // Permite clicar no stepper para voltar a passos já completados (não pular adiante)
+  const goToStep = (target: number) => {
+    if (target < step) {
+      setErrors({});
+      setStep(target);
+    }
+  };
+
+  // Enter avança o passo (exceto em textarea)
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" && step < 4 && !loading) {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag !== "TEXTAREA" && tag !== "BUTTON") {
+        e.preventDefault();
+        next();
+      }
+    }
   };
 
   const finish = async () => {
@@ -211,18 +250,26 @@ export default function Onboarding() {
           <span className="text-xl font-extrabold text-gradient-primary">Conta.AI</span>
         </div>
 
-        {/* Stepper visual */}
-        <div className="hidden sm:flex items-center justify-center gap-2 mb-6">
+        {/* Stepper visual (clicável para passos já completados) */}
+        <nav aria-label="Progresso do onboarding" className="hidden sm:flex items-center justify-center gap-2 mb-6">
           {STEPS.map((s, idx) => {
             const done = step > s.id;
             const current = step === s.id;
+            const clickable = s.id < step && step < 5;
             const Icon = s.icon;
             return (
               <div key={s.id} className="flex items-center">
-                <div
+                <button
+                  type="button"
+                  onClick={() => clickable && goToStep(s.id)}
+                  disabled={!clickable}
+                  aria-current={current ? "step" : undefined}
+                  aria-label={`Passo ${s.id}: ${s.label}${done ? " (concluído)" : current ? " (atual)" : ""}`}
                   className={cn(
-                    "flex flex-col items-center gap-1.5 transition-bounce",
-                    current && "scale-110"
+                    "flex flex-col items-center gap-1.5 transition-bounce focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg p-1",
+                    current && "scale-110",
+                    clickable && "hover:opacity-80 cursor-pointer",
+                    !clickable && "cursor-default"
                   )}
                 >
                   <div
@@ -243,7 +290,7 @@ export default function Onboarding() {
                   >
                     {s.label}
                   </span>
-                </div>
+                </button>
                 {idx < STEPS.length - 1 && (
                   <div
                     className={cn(
@@ -255,16 +302,19 @@ export default function Onboarding() {
               </div>
             );
           })}
-        </div>
+        </nav>
 
-        <Card className="p-4 sm:p-6 md:p-10 rounded-2xl sm:rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95 overflow-hidden">
-          {/* Mobile progress bar */}
-          <div className="sm:hidden mb-6">
-            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-2">
+        <Card
+          onKeyDown={handleKeyDown}
+          className="p-4 sm:p-6 md:p-10 rounded-2xl sm:rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95 overflow-hidden"
+        >
+          {/* Progress bar (mobile + desktop slim) */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-2 sm:hidden">
               <span>Passo {step} de {totalSteps}</span>
               <span className="text-primary">{Math.round(progress)}%</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-1.5 sm:h-1" />
           </div>
 
           {/* ============ STEP 1: Business type ============ */}
@@ -337,6 +387,7 @@ export default function Onboarding() {
                 </Label>
                 <Input
                   id="biz-name"
+                  ref={step === 2 ? firstFieldRef : undefined}
                   value={businessName}
                   onChange={(e) => {
                     setBusinessName(e.target.value);
@@ -344,9 +395,18 @@ export default function Onboarding() {
                   }}
                   placeholder="Ex: Doces da Maria"
                   maxLength={80}
-                  className={cn("h-11 rounded-xl", errors.businessName && "border-destructive")}
+                  className={cn(
+                    "h-11 rounded-xl pr-10",
+                    errors.businessName && "border-destructive",
+                    !errors.businessName && businessName.trim().length >= 2 && "border-success/60"
+                  )}
                   aria-invalid={!!errors.businessName}
                 />
+                {!errors.businessName && businessName.trim().length >= 2 && (
+                  <p className="text-xs text-success-deep flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" /> Nome ótimo!
+                  </p>
+                )}
                 {errors.businessName && (
                   <p className="text-xs text-destructive flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" /> {errors.businessName}
@@ -428,6 +488,7 @@ export default function Onboarding() {
                   </span>
                   <Input
                     id="goal"
+                    ref={step === 3 ? firstFieldRef : undefined}
                     type="number"
                     inputMode="numeric"
                     value={monthlyGoal}
@@ -440,7 +501,8 @@ export default function Onboarding() {
                     max={81000}
                     className={cn(
                       "h-12 rounded-xl pl-10 text-lg font-bold",
-                      errors.monthlyGoal && "border-destructive"
+                      errors.monthlyGoal && "border-destructive",
+                      !errors.monthlyGoal && Number(monthlyGoal) >= 100 && "border-success/60"
                     )}
                     aria-invalid={!!errors.monthlyGoal}
                   />
@@ -449,6 +511,11 @@ export default function Onboarding() {
                   <p className="text-xs text-destructive flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" /> {errors.monthlyGoal}
                   </p>
+                ) : Number(monthlyGoal) >= 100 ? (
+                  <p className="text-xs text-success-deep flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Meta diária ≈ {formatBRL(Number(monthlyGoal) / 30)} · anual ≈ {formatBRL(Number(monthlyGoal) * 12)}
+                  </p>
                 ) : (
                   <p className="text-xs text-muted-foreground">
                     💡 Limite anual MEI 2025: R$ 81.000 (≈ R$ 6.750/mês).
@@ -456,25 +523,37 @@ export default function Onboarding() {
                 )}
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                {[3000, 5000, 6750].map((v) => (
-                  <button
-                    key={v}
-                    type="button"
-                    onClick={() => {
-                      setMonthlyGoal(String(v));
-                      setErrors((p) => ({ ...p, monthlyGoal: "" }));
-                    }}
-                    className={cn(
-                      "py-2.5 px-1 rounded-xl border-2 text-xs sm:text-sm font-bold transition-bounce truncate",
-                      monthlyGoal === String(v)
-                        ? "border-primary bg-primary-soft text-primary"
-                        : "border-border hover:border-primary/40"
-                    )}
-                  >
-                    R$ {v.toLocaleString("pt-BR")}
-                  </button>
-                ))}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                  Sugestões rápidas
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { v: 3000, label: "Iniciante" },
+                    { v: 5000, label: "Crescendo" },
+                    { v: 6750, label: "Limite MEI" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.v}
+                      type="button"
+                      onClick={() => {
+                        setMonthlyGoal(String(opt.v));
+                        setErrors((p) => ({ ...p, monthlyGoal: "" }));
+                      }}
+                      className={cn(
+                        "py-2.5 px-1 rounded-xl border-2 text-xs sm:text-sm font-bold transition-bounce flex flex-col items-center gap-0.5",
+                        monthlyGoal === String(opt.v)
+                          ? "border-primary bg-primary-soft text-primary"
+                          : "border-border hover:border-primary/40"
+                      )}
+                    >
+                      <span className="truncate">R$ {opt.v.toLocaleString("pt-BR")}</span>
+                      <span className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                        {opt.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -646,38 +725,66 @@ export default function Onboarding() {
 
           {/* Footer nav */}
           {step < 5 && (
-            <div className="flex items-center justify-between gap-2 mt-8 pt-6 border-t">
-              <Button
-                variant="ghost"
-                onClick={prev}
-                disabled={step === 1 || loading}
-                className="rounded-xl shrink-0"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Voltar</span>
-              </Button>
-              {step < 4 ? (
-                <Button variant="hero" onClick={next} className="rounded-xl">
-                  Próximo <ArrowRight className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button
-                  variant="success"
-                  onClick={finish}
-                  disabled={loading}
-                  className="rounded-xl min-w-0"
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <span className="hidden sm:inline">Confirmar e criar painel</span>
-                      <span className="sm:hidden">Confirmar</span>
-                      <Check className="h-4 w-4" />
-                    </>
-                  )}
-                </Button>
+            <div className="mt-8 pt-6 border-t space-y-3">
+              {/* Mensagem de status do passo */}
+              {step < 4 && !stepValid && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5 justify-center sm:justify-start">
+                  <HelpCircle className="h-3.5 w-3.5" />
+                  {step === 1 && "Escolha um tipo de negócio para continuar."}
+                  {step === 2 && "Preencha o nome do negócio para continuar."}
+                  {step === 3 && "Defina uma meta entre R$ 100 e R$ 81.000."}
+                </p>
               )}
+
+              <div className="flex items-center justify-between gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={prev}
+                  disabled={step === 1 || loading}
+                  className="rounded-xl shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Voltar</span>
+                </Button>
+
+                <div className="flex items-center gap-3">
+                  {step < 4 && stepValid && (
+                    <span className="hidden md:inline text-[11px] text-muted-foreground">
+                      Pressione <kbd className="px-1.5 py-0.5 rounded border bg-muted font-mono text-[10px]">Enter</kbd> para avançar
+                    </span>
+                  )}
+                  {step < 4 ? (
+                    <Button
+                      variant="hero"
+                      onClick={next}
+                      disabled={!stepValid}
+                      className="rounded-xl"
+                    >
+                      Próximo <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="success"
+                      onClick={finish}
+                      disabled={loading}
+                      className="rounded-xl min-w-0"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Criando seu painel...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="hidden sm:inline">Confirmar e criar painel</span>
+                          <span className="sm:hidden">Confirmar</span>
+                          <Check className="h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </Card>
