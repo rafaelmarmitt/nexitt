@@ -102,7 +102,7 @@ export function WelcomeTour() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !saving && setOpen(v)}>
+    <Dialog open={open} onOpenChange={(v) => !saving && !navigating && setOpen(v)}>
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden border-0 shadow-glow">
         <div className="gradient-mesh px-6 pt-6 pb-4 relative">
           <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-primary/20 blur-2xl" />
