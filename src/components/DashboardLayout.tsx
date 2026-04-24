@@ -19,6 +19,9 @@ import { Link } from "react-router-dom";
 import { BUSINESS_CONFIGS } from "@/lib/businessTypes";
 import { HelpFab } from "@/components/HelpFab";
 import { WelcomeTour } from "@/components/WelcomeTour";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "next-themes";
+import { Moon, Sun, Monitor } from "lucide-react";
 
 interface Props {
   title: string;
