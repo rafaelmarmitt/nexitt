@@ -174,7 +174,7 @@ export function WelcomeTour() {
                 <Button
                   size="sm"
                   className="w-full rounded-lg bg-whatsapp text-white hover:bg-whatsapp/90 disabled:opacity-100"
-                  onClick={() => completeTourAndGo("/whatsapp", "whatsapp")}
+                  onClick={() => openInNewTabAndAdvance("/whatsapp", "whatsapp", 1)}
                   disabled={navigating !== null || saving}
                   aria-label="Ir para a página de conexão do WhatsApp"
                 >
@@ -246,7 +246,7 @@ export function WelcomeTour() {
                     size="sm"
                     variant="outline"
                     className="rounded-lg mt-2"
-                    onClick={() => completeTourAndGo("/impostos", "impostos")}
+                    onClick={() => openInNewTabAndAdvance("/impostos", "impostos", 3)}
                     disabled={navigating !== null || saving}
                     aria-label="Ir para a página de impostos"
                   >
