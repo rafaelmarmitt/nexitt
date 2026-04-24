@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import {
   Loader2, ArrowRight, ArrowLeft, Check, Sparkles, PartyPopper,
   Eye, Building2, Target, ShoppingBag, CheckCircle2, AlertCircle, LayoutDashboard,
+  HelpCircle,
 } from "lucide-react";
 import { BUSINESS_LIST, BUSINESS_CONFIGS, type BusinessType } from "@/lib/businessTypes";
 import mascot from "@/assets/mascot.png";
