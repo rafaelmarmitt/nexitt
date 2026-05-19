@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { Seo } from "@/components/Seo";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,8 @@ const Perfil = () => {
   ];
 
   return (
+    <>
+      <Seo title="Perfil do Negócio · Conta.AI" description="Gerencie dados do seu MEI, metas mensais, preferências de tema e configurações de conta." path="/perfil" />
     <DashboardLayout title="Perfil do Negócio" subtitle="Gerencie dados, metas e configurações">
       <Tabs value={activeTab} onValueChange={(v) => setSearchParams({ tab: v })} className="w-full">
         <TabsList className="mb-5 bg-card border border-border p-1 rounded-xl">
@@ -277,6 +280,7 @@ const Perfil = () => {
         </TabsContent>
       </Tabs>
     </DashboardLayout>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +79,8 @@ export default function Estoque() {
   const esgotados = itens.filter((i) => i.status === "esgotado").length;
 
   return (
+    <>
+      <Seo title="Estoque · Conta.AI" description="Controle de estoque para MEI: monitore quantidades, alertas de mínimo e movimentação de produtos." path="/estoque" />
     <DashboardLayout
       title="Estoque"
       subtitle="Controle do que entra e sai"
@@ -172,5 +175,6 @@ export default function Estoque() {
         </ul>
       </Card>
     </DashboardLayout>
+    </>
   );
 }

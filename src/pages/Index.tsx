@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { StatCard } from "@/components/StatCard";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -177,6 +178,8 @@ const Index = () => {
   };
 
   return (
+    <>
+      <Seo title="Dashboard · Conta.AI" description="Visão geral do seu MEI: vendas, despesas, fluxo de caixa e impostos em tempo real." path="/dashboard" />
     <DashboardLayout
       title={`${saudacao}, ${firstName}! 👋`}
       subtitle={profile?.business_name ? `${profile.business_name} · ${config.label}` : "Aqui está o resumo do seu negócio em tempo real"}
@@ -449,6 +452,7 @@ const Index = () => {
         </Card>
       </div>
     </DashboardLayout>
+    </>
   );
 };
 

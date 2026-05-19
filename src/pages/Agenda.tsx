@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -72,6 +73,8 @@ export default function Agenda() {
   const hoje = new Date().getDay();
 
   return (
+    <>
+      <Seo title="Agenda · Conta.AI" description="Organize compromissos, atendimentos e lembretes do seu MEI em um único lugar integrado ao WhatsApp." path="/agenda" />
     <DashboardLayout
       title="Agenda"
       subtitle={config ? `Seus atendimentos de ${config.label.toLowerCase()}` : "Seus atendimentos"}
@@ -176,5 +179,6 @@ export default function Agenda() {
         </ul>
       </Card>
     </DashboardLayout>
+    </>
   );
 }

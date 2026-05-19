@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import { Seo } from "@/components/Seo";
 import { useEffect } from "react";
 
 const NotFound = () => {
@@ -9,6 +10,8 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
+    <>
+      <Seo title="Página não encontrada · Conta.AI" description="A página que você procura não existe. Volte para o início do Conta.AI." path="/404" />
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">404</h1>
@@ -18,6 +21,7 @@ const NotFound = () => {
         </a>
       </div>
     </div>
+    </>
   );
 };
 

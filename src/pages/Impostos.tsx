@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -165,6 +166,8 @@ const Impostos = () => {
   };
 
   return (
+    <>
+      <Seo title="Impostos DAS MEI · Conta.AI" description="Acompanhe seu DAS MEI, lembretes automáticos de vencimento e gere o PIX para pagamento sem complicação." path="/impostos" />
     <DashboardLayout
       title="Impostos — DAS MEI"
       subtitle="Acompanhe os boletos do ano e marque os pagamentos."
@@ -466,6 +469,7 @@ const Impostos = () => {
         </DialogContent>
       </Dialog>
     </DashboardLayout>
+    </>
   );
 };
 
