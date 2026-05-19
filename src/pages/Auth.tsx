@@ -130,89 +130,105 @@ export default function Auth() {
             <p className="text-2xl font-extrabold text-gradient-primary">Conta.AI</p>
           </div>
 
-          <Card className="p-6 md:p-8 rounded-3xl border-2 shadow-glow backdrop-blur-xl bg-card/95">
+          <Card className="p-6 md:p-8 rounded-3xl border border-border/60 shadow-glow backdrop-blur-xl bg-card/95">
             <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "signup")} className="w-full">
-              <TabsList className="grid grid-cols-2 mb-6 h-11 bg-muted rounded-xl p-1">
-                <TabsTrigger value="signup" className="rounded-lg data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow font-semibold">
+              <TabsList className="!flex w-full mb-7 h-12 bg-muted/70 rounded-2xl p-1 gap-1 overflow-hidden">
+                <TabsTrigger
+                  value="signup"
+                  className="flex-1 h-full rounded-xl text-sm font-semibold transition-all data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow data-[state=inactive]:hover:text-foreground"
+                >
                   Criar conta
                 </TabsTrigger>
-                <TabsTrigger value="login" className="rounded-lg data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow font-semibold">
+                <TabsTrigger
+                  value="login"
+                  className="flex-1 h-full rounded-xl text-sm font-semibold transition-all data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow data-[state=inactive]:hover:text-foreground"
+                >
                   Entrar
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="signup" className="space-y-4 mt-0">
-                <div className="space-y-1">
-                  <h2 className="text-2xl font-extrabold flex items-center gap-2">
-                    Comece agora <Sparkles className="h-5 w-5 text-warning" />
+              <TabsContent value="signup" className="space-y-5 mt-0">
+                <div className="space-y-1.5">
+                  <h2 className="text-2xl md:text-3xl font-extrabold flex items-center gap-2 tracking-tight">
+                    Comece agora
+                    <Sparkles className="h-5 w-5 text-warning animate-pulse" />
                   </h2>
-                  <p className="text-sm text-muted-foreground">Leva apenas 30 segundos.</p>
+                  <p className="text-sm text-muted-foreground">Leva apenas 30 segundos — sem cartão de crédito.</p>
                 </div>
 
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="signup-name">Seu nome</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="signup-name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Maria Silva" required className="pl-9 h-11 rounded-xl" />
+                    <Label htmlFor="signup-name" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Seu nome</Label>
+                    <div className="relative group">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="signup-name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Maria Silva" required className="pl-10 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="signup-email">E-mail</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" required className="pl-9 h-11 rounded-xl" />
+                    <Label htmlFor="signup-email" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">E-mail</Label>
+                    <div className="relative group">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" required className="pl-10 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="signup-pwd">Senha</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="signup-pwd" type={showPwd ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6} className="pl-9 pr-10 h-11 rounded-xl" />
-                      <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <Label htmlFor="signup-pwd" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Senha</Label>
+                    <div className="relative group">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="signup-pwd" type={showPwd ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6} className="pl-10 pr-11 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
+                      <button type="button" aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"} onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                         {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
-                  <Button type="submit" variant="hero" size="lg" disabled={loading} className="w-full mt-2 rounded-xl">
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Criar minha conta <ArrowRight className="h-4 w-4" /></>}
+                  <Button type="submit" variant="hero" size="lg" disabled={loading} className="w-full mt-2 h-12 rounded-xl text-base font-semibold group">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Criar minha conta <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></>}
                   </Button>
                 </form>
               </TabsContent>
 
-              <TabsContent value="login" className="space-y-4 mt-0">
-                <div className="space-y-1">
-                  <h2 className="text-2xl font-extrabold">Bem-vindo de volta 👋</h2>
+              <TabsContent value="login" className="space-y-5 mt-0">
+                <div className="space-y-1.5">
+                  <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Bem-vindo de volta 👋</h2>
                   <p className="text-sm text-muted-foreground">Continue de onde parou.</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="login-email">E-mail</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required className="pl-9 h-11 rounded-xl" />
+                    <Label htmlFor="login-email" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">E-mail</Label>
+                    <div className="relative group">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required className="pl-10 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="login-pwd">Senha</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="login-pwd" type={showPwd ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" required className="pl-9 pr-10 h-11 rounded-xl" />
-                      <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="login-pwd" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Senha</Label>
+                      <Link to="#" className="text-xs font-semibold text-primary hover:underline">Esqueceu?</Link>
+                    </div>
+                    <div className="relative group">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="login-pwd" type={showPwd ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" required className="pl-10 pr-11 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
+                      <button type="button" aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"} onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                         {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
-                  <Button type="submit" variant="hero" size="lg" disabled={loading} className="w-full mt-2 rounded-xl">
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Entrar <ArrowRight className="h-4 w-4" /></>}
+                  <Button type="submit" variant="hero" size="lg" disabled={loading} className="w-full mt-2 h-12 rounded-xl text-base font-semibold group">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Entrar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></>}
                   </Button>
                 </form>
               </TabsContent>
             </Tabs>
 
-            <p className="text-[11px] text-center text-muted-foreground mt-6">
-              Ao continuar, você concorda com nossos <Link to="#" className="text-primary hover:underline">Termos</Link> e <Link to="#" className="text-primary hover:underline">Privacidade</Link>.
+            <div className="flex items-center gap-3 my-6">
+              <div className="h-px flex-1 bg-border/60" />
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">100% seguro</span>
+              <div className="h-px flex-1 bg-border/60" />
+            </div>
+
+            <p className="text-[11px] text-center text-muted-foreground leading-relaxed">
+              Ao continuar, você concorda com nossos <Link to="#" className="text-primary hover:underline font-medium">Termos</Link> e <Link to="#" className="text-primary hover:underline font-medium">Privacidade</Link>.
             </p>
           </Card>
         </div>
