@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { CopyButton } from "@/components/CopyButton";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,8 @@ const WhatsAppPage = () => {
   const filtrados = filtro === "Todos" ? comandos : comandos.filter((c) => c.cat === filtro);
 
   return (
+    <>
+      <Seo title="WhatsApp & Conexão · Conta.AI" description="Conecte seu WhatsApp ao Conta.AI e gerencie seu MEI conversando com o bot: vendas, despesas, clientes e mais." path="/whatsapp" />
     <DashboardLayout
       title="WhatsApp & Conexão"
       subtitle="Gerencie seu bot e veja a integração em tempo real"
@@ -293,6 +296,7 @@ const WhatsAppPage = () => {
         </TabsContent>
       </Tabs>
     </DashboardLayout>
+    </>
   );
 };
 

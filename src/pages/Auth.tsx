@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Seo } from "@/components/Seo";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -77,6 +78,8 @@ export default function Auth() {
   };
 
   return (
+    <>
+      <Seo title="Entrar ou criar conta · Conta.AI" description="Acesse sua conta Conta.AI ou crie uma grátis em 30 segundos. Gerencie seu MEI direto pelo WhatsApp." path="/auth" />
     <div className="min-h-screen flex relative overflow-hidden bg-background">
       {/* Decorative blobs */}
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full gradient-primary opacity-20 blur-3xl animate-blob" />
@@ -215,5 +218,6 @@ export default function Auth() {
         </div>
       </div>
     </div>
+    </>
   );
 }

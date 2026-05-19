@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,6 +98,8 @@ const Relatorios = () => {
   const totalSaidas = filtradas.filter((t) => t.tipo === "saida").reduce((s, t) => s + t.valor, 0);
 
   return (
+    <>
+      <Seo title="Relatórios financeiros · Conta.AI" description="Relatórios mensais prontos para o contador: receitas, despesas, lucro e comparativos do seu MEI." path="/relatorios" />
     <DashboardLayout
       title="Relatórios Financeiros"
       subtitle="Análise detalhada das suas transações"
@@ -323,6 +326,7 @@ const Relatorios = () => {
         </div>
       </Card>
     </DashboardLayout>
+    </>
   );
 };
 

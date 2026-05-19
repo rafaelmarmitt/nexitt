@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { Seo } from "@/components/Seo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,6 +106,8 @@ const Catalogo = () => {
   };
 
   return (
+    <>
+      <Seo title="Catálogo & Clientes · Conta.AI" description="Cadastre produtos, serviços e clientes para que o bot do WhatsApp registre vendas automaticamente." path="/catalogo" />
     <DashboardLayout title="Catálogo & Clientes" subtitle="Tudo que o bot precisa saber sobre seu negócio">
       <Tabs defaultValue="produtos" className="w-full">
         <TabsList className="mb-5 bg-card border border-border p-1 rounded-xl">
@@ -296,6 +299,7 @@ const Catalogo = () => {
         </TabsContent>
       </Tabs>
     </DashboardLayout>
+    </>
   );
 };
 

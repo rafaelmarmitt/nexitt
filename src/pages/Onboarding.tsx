@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, KeyboardEvent } from "react";
+import { Seo } from "@/components/Seo";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -236,6 +237,8 @@ export default function Onboarding() {
   /* -------------------- Render -------------------- */
 
   return (
+    <>
+      <Seo title="Configurar seu negócio · Conta.AI" description="Configure seu MEI em poucos minutos: tipo de negócio, dados e metas mensais para personalizar seu dashboard." path="/onboarding" />
     <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-8 bg-background relative overflow-x-hidden">
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full gradient-primary opacity-20 blur-3xl animate-blob" />
       <div
@@ -790,5 +793,6 @@ export default function Onboarding() {
         </Card>
       </div>
     </div>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { Seo } from "@/components/Seo";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import {
@@ -40,6 +41,8 @@ const Landing = () => {
   const blobY2 = useTransform(heroProgress, [0, 1], [0, prefersReducedMotion ? 0 : -140]);
 
   return (
+    <>
+      <Seo title="Conta.AI — ERP invisível para MEI via WhatsApp" description="Gestão financeira simples para MEIs direto no WhatsApp. Controle vendas, despesas, DAS, clientes e produtos com bot integrado." path="/" />
     <div className="min-h-screen bg-background text-foreground font-sans antialiased overflow-x-hidden">
       {/* Barra de progresso de scroll */}
       <motion.div
@@ -432,6 +435,7 @@ const Landing = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 
