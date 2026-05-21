@@ -202,14 +202,15 @@ const WhatsAppPage = () => {
     setSaving(true);
 
     const normalizedPhone = onlyDigits(phone);
-    const firstLink = Boolean(normalizedPhone) && !profile?.phone;
+    const phoneChanged = Boolean(normalizedPhone) && normalizedPhone !== (profile?.phone ?? "");
+    const shouldSendOnboarding = Boolean(normalizedPhone) && (phoneChanged || !profile?.whatsapp_onboarding_sent_at);
     const { error } = await supabase
       .from("profiles")
       .update({
         phone: normalizedPhone || null,
         whatsapp_bot_enabled: true,
         whatsapp_connected_at: normalizedPhone && !profile?.whatsapp_connected_at ? new Date().toISOString() : profile?.whatsapp_connected_at ?? null,
-        whatsapp_onboarding_pending: firstLink ? true : profile?.whatsapp_onboarding_pending ?? false,
+        whatsapp_onboarding_pending: shouldSendOnboarding ? true : profile?.whatsapp_onboarding_pending ?? false,
       })
       .eq("user_id", user.id);
 
@@ -220,7 +221,7 @@ const WhatsAppPage = () => {
       return;
     }
 
-    toast.success(firstLink ? "Telefone vinculado. O bot vai enviar uma mensagem de boas-vindas." : "Telefone do WhatsApp atualizado.");
+    toast.success(shouldSendOnboarding ? "Telefone vinculado. O bot vai enviar uma mensagem de boas-vindas." : "Telefone do WhatsApp atualizado.");
     refreshAll();
   };
 
