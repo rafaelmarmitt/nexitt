@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,10 +34,10 @@ import {
 
 type ProfileRow = {
   phone: string | null;
-  whatsapp_phone_number_id: string | null;
-  whatsapp_business_account_id: string | null;
   whatsapp_connected_at: string | null;
   whatsapp_bot_enabled: boolean;
+  whatsapp_onboarding_pending: boolean | null;
+  whatsapp_onboarding_sent_at: string | null;
 };
 
 type WhatsAppMessage = {
@@ -62,7 +61,7 @@ const comandos = [
 
 const cats = ["Todos", "Financeiro", "Agenda", "Catalogo", "Impostos", "Consulta"];
 
-const workflowUrl = "https://rafamitt.app.n8n.cloud/workflow/0F12AceLcSJkehI0";
+const workflowUrl = "https://rafamitt.app.n8n.cloud/workflow/Pm0ProvMv1RhWJh6";
 
 const maskPhone = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 13);
@@ -82,30 +81,28 @@ const WhatsAppPage = () => {
   const [filtro, setFiltro] = useState("Todos");
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [phone, setPhone] = useState("");
-  const [phoneNumberId, setPhoneNumberId] = useState("");
-  const [businessAccountId, setBusinessAccountId] = useState("");
-  const [botEnabled, setBotEnabled] = useState(true);
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
   const [activity, setActivity] = useState<{ h: string; msgs: number }[]>([]);
   const [messagesToday, setMessagesToday] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const connected = Boolean(profile?.whatsapp_phone_number_id);
+  const connected = Boolean(profile?.phone);
   const lastMessage = messages[0]?.created_at;
   const filtrados = filtro === "Todos" ? comandos : comandos.filter((command) => command.cat === filtro);
+  const tutorialPending = Boolean(profile?.whatsapp_onboarding_pending);
 
   const statusLabel = useMemo(() => {
     if (!connected) return "Pendente";
-    return botEnabled ? "Conectado" : "Pausado";
-  }, [botEnabled, connected]);
+    return tutorialPending ? "Tutorial em envio" : "Conectado";
+  }, [connected, tutorialPending]);
 
   const fetchConnection = useCallback(async () => {
     if (!user) return;
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("phone, whatsapp_phone_number_id, whatsapp_business_account_id, whatsapp_connected_at, whatsapp_bot_enabled")
+      .select("phone, whatsapp_connected_at, whatsapp_bot_enabled, whatsapp_onboarding_pending, whatsapp_onboarding_sent_at")
       .eq("user_id", user.id)
       .maybeSingle();
 
@@ -117,9 +114,6 @@ const WhatsAppPage = () => {
     const nextProfile = data as ProfileRow | null;
     setProfile(nextProfile);
     setPhone(maskPhone(nextProfile?.phone ?? ""));
-    setPhoneNumberId(nextProfile?.whatsapp_phone_number_id ?? "");
-    setBusinessAccountId(nextProfile?.whatsapp_business_account_id ?? "");
-    setBotEnabled(nextProfile?.whatsapp_bot_enabled ?? true);
   }, [user]);
 
   const fetchMessages = useCallback(async () => {
@@ -208,14 +202,14 @@ const WhatsAppPage = () => {
     setSaving(true);
 
     const normalizedPhone = onlyDigits(phone);
+    const firstLink = Boolean(normalizedPhone) && !profile?.phone;
     const { error } = await supabase
       .from("profiles")
       .update({
         phone: normalizedPhone || null,
-        whatsapp_phone_number_id: phoneNumberId.trim() || null,
-        whatsapp_business_account_id: businessAccountId.trim() || null,
-        whatsapp_bot_enabled: botEnabled,
-        whatsapp_connected_at: phoneNumberId.trim() ? new Date().toISOString() : null,
+        whatsapp_bot_enabled: true,
+        whatsapp_connected_at: normalizedPhone && !profile?.whatsapp_connected_at ? new Date().toISOString() : profile?.whatsapp_connected_at ?? null,
+        whatsapp_onboarding_pending: firstLink ? true : profile?.whatsapp_onboarding_pending ?? false,
       })
       .eq("user_id", user.id);
 
@@ -226,7 +220,7 @@ const WhatsAppPage = () => {
       return;
     }
 
-    toast.success("Conexao do WhatsApp salva.");
+    toast.success(firstLink ? "Telefone vinculado. O bot vai enviar uma mensagem de boas-vindas." : "Telefone do WhatsApp atualizado.");
     refreshAll();
   };
 
@@ -239,7 +233,7 @@ const WhatsAppPage = () => {
       />
       <DashboardLayout
         title="WhatsApp & Conexao"
-        subtitle="Vincule a Meta API ao workflow visual do n8n e acompanhe o processamento em tempo real"
+        subtitle="Vincule seu telefone ao bot e acompanhe o processamento em tempo real"
         actions={
           <div className="flex items-center gap-2">
             <Button variant="outline" className="rounded-xl" onClick={refreshAll} disabled={loading}>
@@ -254,7 +248,7 @@ const WhatsAppPage = () => {
         <div className="grid gap-4 md:grid-cols-3 mb-6">
           <Card className={`p-5 shadow-card relative overflow-hidden ${connected ? "border-success/30 bg-success-soft/40" : "border-warning/30"}`}>
             <div className="absolute top-3 right-3 flex items-center justify-center h-10 w-10 rounded-full">
-              <span className={`relative inline-flex h-3 w-3 rounded-full ${connected && botEnabled ? "bg-success animate-pulse" : "bg-muted-foreground"}`} />
+              <span className={`relative inline-flex h-3 w-3 rounded-full ${connected ? "bg-success animate-pulse" : "bg-muted-foreground"}`} />
             </div>
             <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Status do bot</p>
             <p className="text-2xl font-extrabold mt-1">{statusLabel}</p>
@@ -271,7 +265,7 @@ const WhatsAppPage = () => {
           <Card className="p-5 shadow-card hover-lift">
             <Clock className="h-5 w-5 text-coral mb-2" />
             <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Workflow n8n</p>
-            <p className="text-sm font-bold mt-2 truncate">Conta.AI WhatsApp Visual</p>
+            <p className="text-sm font-bold mt-2 truncate">Conta.AI WhatsApp Agent + Tool</p>
             <a className="text-xs text-primary font-semibold hover:underline" href={workflowUrl} target="_blank" rel="noreferrer">
               Abrir workflow
             </a>
@@ -293,41 +287,33 @@ const WhatsAppPage = () => {
                     <Bot className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-base font-bold">Vinculo Meta WhatsApp</h2>
-                    <p className="text-xs text-muted-foreground">O n8n usa o Phone Number ID para localizar o perfil certo no Supabase.</p>
+                    <h2 className="text-base font-bold">Vincular seu WhatsApp</h2>
+                    <p className="text-xs text-muted-foreground">Informe o telefone que vai conversar com o bot Conta.AI.</p>
                   </div>
                   <Badge className={connected ? "bg-success-soft text-success-deep border-0" : ""} variant={connected ? "default" : "outline"}>
                     {connected ? "Vinculado" : "Pendente"}
                   </Badge>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">WhatsApp publico</Label>
+                <div className="grid gap-4">
+                  <div className="space-y-2 max-w-md">
+                    <Label htmlFor="phone">Seu WhatsApp</Label>
                     <Input id="phone" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="+55 11 98765-4321" />
+                    <p className="text-xs text-muted-foreground">
+                      Use o mesmo numero que voce vai usar para falar com o bot.
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneNumberId">Phone Number ID da Meta</Label>
-                    <Input id="phoneNumberId" value={phoneNumberId} onChange={(event) => setPhoneNumberId(event.target.value)} placeholder="123456789000000" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="businessAccountId">WhatsApp Business Account ID</Label>
-                    <Input id="businessAccountId" value={businessAccountId} onChange={(event) => setBusinessAccountId(event.target.value)} placeholder="987654321000000" />
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
-                    <div>
-                      <Label htmlFor="botEnabled">Bot ativo</Label>
-                      <p className="text-xs text-muted-foreground">Pausar impede novas respostas automaticas.</p>
+                  {connected && (
+                    <div className="rounded-lg border border-success/30 bg-success-soft/40 px-4 py-3 text-sm text-success-deep">
+                      Bot conectado. Ao vincular pela primeira vez, voce recebe uma confirmacao e duas mensagens curtas de tutorial no WhatsApp.
                     </div>
-                    <Switch id="botEnabled" checked={botEnabled} onCheckedChange={setBotEnabled} />
-                  </div>
+                  )}
                 </div>
 
                 <div className="mt-5 flex flex-wrap gap-2">
                   <Button variant="success" onClick={saveConnection} disabled={saving}>
-                    <Save className="h-4 w-4" /> Salvar alteracoes
+                    <Save className="h-4 w-4" /> Vincular telefone
                   </Button>
-                  <CopyButton text={phoneNumberId} variant="outline" />
                 </div>
               </Card>
 
@@ -359,8 +345,8 @@ const WhatsAppPage = () => {
                   <div className="flex-1">
                     <p className="font-bold text-sm">Conta.AI Bot</p>
                     <p className="text-[11px] opacity-90 flex items-center gap-1">
-                      <span className={`h-1.5 w-1.5 rounded-full ${connected && botEnabled ? "bg-success animate-pulse" : "bg-white/60"}`} />
-                      {connected && botEnabled ? "online" : "aguardando conexao"}
+                      <span className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-success animate-pulse" : "bg-white/60"}`} />
+                      {connected ? "online" : "aguardando conexao"}
                     </p>
                   </div>
                   <Badge className="bg-white/20 text-white border-0 text-[10px]">Realtime</Badge>
@@ -409,7 +395,7 @@ const WhatsAppPage = () => {
                 <div className="space-y-3 text-xs text-muted-foreground">
                   <p>WhatsApp Trigger nativo recebe mensagens da Meta API.</p>
                   <p>Switch separa texto, audio, imagem e fallback.</p>
-                  <p>OpenAI transcreve audio e interpreta imagem antes do Agent.</p>
+                  <p>Gemini 2.5 Flash-Lite transcreve audio e interpreta imagem antes do Agent.</p>
                   <p>Wait + Aggregate juntam mensagens enviadas em sequencia.</p>
                   <p>Supabase grava vendas, despesas, agenda, produtos, DAS e historico.</p>
                 </div>

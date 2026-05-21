@@ -259,6 +259,8 @@ export type Database = {
           whatsapp_bot_enabled: boolean
           whatsapp_business_account_id: string | null
           whatsapp_connected_at: string | null
+          whatsapp_onboarding_pending: boolean | null
+          whatsapp_onboarding_sent_at: string | null
           whatsapp_phone_number_id: string | null
         }
         Insert: {
@@ -278,6 +280,8 @@ export type Database = {
           whatsapp_bot_enabled?: boolean
           whatsapp_business_account_id?: string | null
           whatsapp_connected_at?: string | null
+          whatsapp_onboarding_pending?: boolean | null
+          whatsapp_onboarding_sent_at?: string | null
           whatsapp_phone_number_id?: string | null
         }
         Update: {
@@ -297,6 +301,8 @@ export type Database = {
           whatsapp_bot_enabled?: boolean
           whatsapp_business_account_id?: string | null
           whatsapp_connected_at?: string | null
+          whatsapp_onboarding_pending?: boolean | null
+          whatsapp_onboarding_sent_at?: string | null
           whatsapp_phone_number_id?: string | null
         }
         Relationships: []
