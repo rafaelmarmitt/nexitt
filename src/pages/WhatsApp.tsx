@@ -61,7 +61,7 @@ const comandos = [
 
 const cats = ["Todos", "Financeiro", "Agenda", "Catalogo", "Impostos", "Consulta"];
 
-const workflowUrl = "https://rafamitt.app.n8n.cloud/workflow/Pm0ProvMv1RhWJh6";
+const workflowUrl = "https://rafamitt.app.n8n.cloud/workflow/7YfGKuZqcJfeySm7";
 
 const maskPhone = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 13);
@@ -265,7 +265,7 @@ const WhatsAppPage = () => {
           <Card className="p-5 shadow-card hover-lift">
             <Clock className="h-5 w-5 text-coral mb-2" />
             <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Workflow n8n</p>
-            <p className="text-sm font-bold mt-2 truncate">Conta.AI WhatsApp Agent + Tool</p>
+            <p className="text-sm font-bold mt-2 truncate">Conta.AI Z-API WhatsApp Agent</p>
             <a className="text-xs text-primary font-semibold hover:underline" href={workflowUrl} target="_blank" rel="noreferrer">
               Abrir workflow
             </a>
@@ -393,7 +393,7 @@ const WhatsAppPage = () => {
                   <h3 className="text-sm font-bold">Arquitetura ativa</h3>
                 </div>
                 <div className="space-y-3 text-xs text-muted-foreground">
-                  <p>WhatsApp Trigger nativo recebe mensagens da Meta API.</p>
+                  <p>Webhook Z-API recebe mensagens do WhatsApp conectado.</p>
                   <p>Switch separa texto, audio, imagem e fallback.</p>
                   <p>Gemini 2.5 Flash-Lite transcreve audio e interpreta imagem antes do Agent.</p>
                   <p>Wait + Aggregate juntam mensagens enviadas em sequencia.</p>
