@@ -158,6 +158,53 @@ export type Database = {
         }
         Relationships: []
       }
+      followups: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          due_at: string
+          id: string
+          message: string
+          metadata: Json
+          phone_number: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          due_at: string
+          id?: string
+          message: string
+          metadata?: Json
+          phone_number: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          due_at?: string
+          id?: string
+          message?: string
+          metadata?: Json
+          phone_number?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "followups_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory: {
         Row: {
           created_at: string
@@ -259,7 +306,7 @@ export type Database = {
           whatsapp_bot_enabled: boolean
           whatsapp_business_account_id: string | null
           whatsapp_connected_at: string | null
-          whatsapp_onboarding_pending: boolean | null
+          whatsapp_onboarding_pending: boolean
           whatsapp_onboarding_sent_at: string | null
           whatsapp_phone_number_id: string | null
         }
@@ -280,7 +327,7 @@ export type Database = {
           whatsapp_bot_enabled?: boolean
           whatsapp_business_account_id?: string | null
           whatsapp_connected_at?: string | null
-          whatsapp_onboarding_pending?: boolean | null
+          whatsapp_onboarding_pending?: boolean
           whatsapp_onboarding_sent_at?: string | null
           whatsapp_phone_number_id?: string | null
         }
@@ -301,7 +348,7 @@ export type Database = {
           whatsapp_bot_enabled?: boolean
           whatsapp_business_account_id?: string | null
           whatsapp_connected_at?: string | null
-          whatsapp_onboarding_pending?: boolean | null
+          whatsapp_onboarding_pending?: boolean
           whatsapp_onboarding_sent_at?: string | null
           whatsapp_phone_number_id?: string | null
         }
@@ -452,8 +499,8 @@ export type Database = {
           created_at: string
           customer_id: string | null
           direction: string
+          error: string | null
           id: string
-          media_url: string | null
           message_type: string
           phone_number: string
           raw_payload: Json
@@ -468,8 +515,8 @@ export type Database = {
           created_at?: string
           customer_id?: string | null
           direction: string
+          error?: string | null
           id?: string
-          media_url?: string | null
           message_type?: string
           phone_number: string
           raw_payload?: Json
@@ -484,8 +531,8 @@ export type Database = {
           created_at?: string
           customer_id?: string | null
           direction?: string
+          error?: string | null
           id?: string
-          media_url?: string | null
           message_type?: string
           phone_number?: string
           raw_payload?: Json
@@ -496,56 +543,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "whatsapp_messages_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      followups: {
-        Row: {
-          created_at: string
-          customer_id: string | null
-          description: string | null
-          due_at: string | null
-          id: string
-          metadata: Json
-          source: string
-          status: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          customer_id?: string | null
-          description?: string | null
-          due_at?: string | null
-          id?: string
-          metadata?: Json
-          source?: string
-          status?: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          customer_id?: string | null
-          description?: string | null
-          due_at?: string | null
-          id?: string
-          metadata?: Json
-          source?: string
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "followups_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
