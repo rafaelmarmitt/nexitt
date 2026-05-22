@@ -246,7 +246,7 @@ export default function Admin() {
 
   return (
     <DashboardLayout title="Admin" subtitle="Saúde e crescimento do Conta.AI">
-      <Seo title="Admin — Conta.AI" description="Painel interno" />
+      <Seo title="Admin — Conta.AI" description="Painel interno" path="/admin" />
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="mb-6">
