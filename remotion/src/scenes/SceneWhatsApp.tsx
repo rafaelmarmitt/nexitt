@@ -58,21 +58,21 @@ export const SceneWhatsApp: React.FC = () => {
     <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
       {/* Side label */}
       <div style={{
-        position: "absolute", left: 72, top: 360, maxWidth: 420, fontFamily: FONT,
+        position: "absolute", left: 48, top: 420, maxWidth: 300, fontFamily: FONT,
         opacity: spring({ frame: frame - 20, fps, config: { damping: 20 } }),
       }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: "#0d7a6f", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 16 }}>
+        <div style={{ fontSize: 18, fontWeight: 700, color: "#0d7a6f", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 12 }}>
           1 · Você manda no chat
         </div>
-        <div style={{ fontSize: 46, fontWeight: 800, lineHeight: 1.08, letterSpacing: "-0.03em", color: "#0f1f1d" }}>
-          Apenas digite a venda. A IA cuida do resto.
+        <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.02, letterSpacing: "-0.03em", color: "#0f1f1d" }}>
+          Digite e pronto.
         </div>
       </div>
 
       <div style={{
-        transform: `scale(${interpolate(phoneIn, [0, 1], [0.84, 1.02])}) translateY(${float}px) rotate(${interpolate(phoneIn, [0, 1], [8, 2.5])}deg)`,
+        transform: `scale(${interpolate(phoneIn, [0, 1], [0.94, 1.16])}) translateY(${float}px) rotate(${interpolate(phoneIn, [0, 1], [6, 1.5])}deg)`,
         opacity: phoneIn,
-        marginLeft: 360,
+        marginLeft: 250,
       }}>
         <Phone>
           {/* WhatsApp header */}
