@@ -116,10 +116,10 @@ const Landing = () => {
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-              className="relative lg:scale-[1.18] lg:origin-left lg:-mr-16 xl:-mr-24"
+              className="relative lg:scale-[1.28] lg:origin-left lg:-mr-20 xl:-mr-28"
             >
               <video
-                src="/conta-ai-hero.mp4"
+                src="/conta-ai-hero-loop.mp4?v=2"
                 poster={heroMockup}
                 autoPlay
                 muted
