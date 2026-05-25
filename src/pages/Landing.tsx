@@ -136,14 +136,14 @@ const Landing = () => {
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-2 -left-2 sm:left-4 bg-card rounded-2xl shadow-card border border-border p-3 flex items-center gap-2.5 max-w-[220px]"
+                className="absolute -bottom-1 -left-1 sm:left-4 bg-card rounded-xl sm:rounded-2xl shadow-card border border-border p-1.5 sm:p-3 flex items-center gap-1.5 sm:gap-2.5 max-w-[150px] sm:max-w-[220px]"
               >
-                <div className="h-9 w-9 rounded-full bg-success-soft flex items-center justify-center shrink-0">
-                  <Zap className="h-4 w-4 text-success-deep" />
+                <div className="h-6 w-6 sm:h-9 sm:w-9 rounded-full bg-success-soft flex items-center justify-center shrink-0">
+                  <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-success-deep" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold">Venda registrada ✓</p>
-                  <p className="text-[10px] text-muted-foreground">R$ 50,00 — agora</p>
+                  <p className="text-[10px] sm:text-xs font-bold leading-tight">Venda registrada ✓</p>
+                  <p className="text-[9px] sm:text-[10px] text-muted-foreground leading-tight">R$ 50,00 — agora</p>
                 </div>
               </motion.div>
             </motion.div>
