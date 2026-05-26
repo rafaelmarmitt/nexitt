@@ -71,6 +71,7 @@ const asNumber = (value: unknown, fallback = 0) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 const digitsOnly = (value: unknown) => asString(value).replace(/\D/g, "");
+const asBoolean = (value: unknown) => value === true || value === "true";
 
 const normalizePhone = (value: unknown) => {
   const digits = digitsOnly(value);
@@ -91,6 +92,54 @@ const getBusinessPolicy = (type: unknown) => {
   const businessType = asBusinessType(type);
   return { businessType, ...BUSINESS_POLICIES[businessType] };
 };
+
+const normalizePaymentMethod = (value: unknown) => {
+  const method = asString(value)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s-]+/g, "_");
+
+  const aliases: Record<string, string> = {
+    credito: "cartao_credito",
+    cartao: "cartao_credito",
+    cartao_credito: "cartao_credito",
+    debito: "cartao_debito",
+    cartao_debito: "cartao_debito",
+    dinheiro: "dinheiro",
+    pix: "pix",
+    boleto: "boleto",
+    transferencia: "transferencia",
+    transfer: "transferencia",
+    outro: "outro",
+  };
+
+  return aliases[method] ?? null;
+};
+
+const normalizeTaxStatus = (value: unknown) => {
+  const status = asString(value)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  const aliases: Record<string, string> = {
+    paid: "pago",
+    pago: "pago",
+    pending: "pendente",
+    pendente: "pendente",
+    overdue: "atrasado",
+    atrasado: "atrasado",
+    vencido: "vencido",
+  };
+
+  return aliases[status] ?? "pendente";
+};
+
+const normalizeSalePayload = (actionData: JsonRecord) => ({
+  ...actionData,
+  payment_method: normalizePaymentMethod(actionData.payment_method ?? actionData.paymentMethod),
+});
 
 const getEnv = (name: string) => {
   const value = Deno.env.get(name);
@@ -376,18 +425,13 @@ const handleRegisterAction = async (body: JsonRecord) => {
   let error: unknown = null;
 
   if (actionType === "create_sale") {
-    ({ data, error } = await admin
-      .from("sales")
-      .insert({
-        user_id: userId,
-        customer_id: customerId,
-        total: asNumber(actionData.total ?? actionData.amount),
-        payment_method: asString(actionData.payment_method) || null,
-        sold_at: asString(actionData.sold_at) || new Date().toISOString(),
-        notes: asString(actionData.notes ?? body.conversationText) || null,
-      })
-      .select("*")
-      .single());
+    ({ data, error } = await admin.rpc("register_whatsapp_sale", {
+      p_user_id: userId,
+      p_customer_id: customerId,
+      p_action_data: normalizeSalePayload(actionData),
+      p_conversation_text: asString(actionData.notes ?? body.conversationText) || null,
+      p_business_type: policy.businessType,
+    }));
   } else if (actionType === "create_expense") {
     ({ data, error } = await admin
       .from("expenses")
@@ -396,7 +440,7 @@ const handleRegisterAction = async (body: JsonRecord) => {
         description: asString(actionData.description) || "Despesa via WhatsApp",
         amount: asNumber(actionData.amount ?? actionData.total),
         category: asString(actionData.category) || null,
-        payment_method: asString(actionData.payment_method) || null,
+        payment_method: normalizePaymentMethod(actionData.payment_method ?? actionData.paymentMethod),
         expense_date: asString(actionData.expense_date) || today(),
         notes: asString(actionData.notes ?? body.conversationText) || null,
       })
@@ -425,7 +469,7 @@ const handleRegisterAction = async (body: JsonRecord) => {
         price: asNumber(actionData.price),
         cost: asNumber(actionData.cost),
         category: asString(actionData.category) || null,
-        is_service: policy.appointmentMode === "enabled" || Boolean(actionData.is_service ?? false),
+        is_service: policy.appointmentMode === "enabled" || asBoolean(actionData.is_service),
         description: asString(actionData.description ?? body.conversationText) || null,
       })
       .select("*")
@@ -483,7 +527,7 @@ const handleRegisterAction = async (body: JsonRecord) => {
           amount: asNumber(actionData.amount),
           due_date: asString(actionData.due_date) || null,
           pix_code: asString(actionData.pix_code) || null,
-          status: asString(actionData.status) || "pending",
+          status: normalizeTaxStatus(actionData.status),
         },
         { onConflict: "user_id,month_reference" },
       )
