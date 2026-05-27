@@ -61,24 +61,50 @@ const Catalogo = () => {
   );
 
   const [open, setOpen] = useState(false);
-  const [novo, setNovo] = useState({ nome: "", preco: "", categoria: "", emoji: "📦" });
+  const [novo, setNovo] = useState({ nome: "", preco: "", custo: "", categoria: "", emoji: "📦", quantidade: "0", minimo: "0" });
   const [busca, setBusca] = useState("");
   const [buscaCli, setBuscaCli] = useState("");
+
+  const lucro = Number(novo.preco || 0) - Number(novo.custo || 0);
+  const margem = Number(novo.preco || 0) > 0 ? ((lucro / Number(novo.preco || 0)) * 100) : 0;
 
   const adicionar = async () => {
     if (!novo.nome || !novo.preco) return toast.error("Preencha nome e preço");
     if (!user) return toast.error("Faça login para adicionar produtos");
-    const { error } = await supabase.from("products").insert({
-      user_id: user.id,
-      name: novo.nome,
-      price: parseFloat(novo.preco),
-      category: novo.categoria || "Outros",
-      image_url: novo.emoji,
+
+    setSavingProd(true);
+    const { data: prod, error: prodErr } = await supabase
+      .from("products")
+      .insert({
+        user_id: user.id,
+        name: novo.nome,
+        price: parseFloat(novo.preco),
+        cost: parseFloat(novo.custo || "0"),
+        category: novo.categoria || "Outros",
+        image_url: novo.emoji,
+        active: true,
+        is_service: false,
+      })
+      .select()
+      .single();
+
+    if (prodErr || !prod) {
+      setSavingProd(false);
+      return toast.error(prodErr?.message || "Erro ao criar produto");
+    }
+
+    const { error: invErr } = await supabase.from("inventory").insert({
+      product_id: prod.id,
+      quantity: Number(novo.quantidade || 0),
+      min_quantity: Number(novo.minimo || 0),
     });
-    if (error) return toast.error(error.message);
-    setNovo({ nome: "", preco: "", categoria: "", emoji: "📦" });
+
+    setSavingProd(false);
+    if (invErr) return toast.error(invErr.message);
+
+    setNovo({ nome: "", preco: "", custo: "", categoria: "", emoji: "📦", quantidade: "0", minimo: "0" });
     setOpen(false);
-    toast.success("Produto adicionado ao catálogo!");
+    toast.success("Produto e estoque cadastrados!");
     refetchProdutos();
   };
 
