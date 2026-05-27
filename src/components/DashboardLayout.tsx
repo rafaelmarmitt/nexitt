@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import mascot from "@/assets/mascot.png";
-import { Bell, Search, HelpCircle, LogOut, User as UserIcon, Settings } from "lucide-react";
+import { Bell, Search, LogOut, User as UserIcon, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -92,9 +92,6 @@ export function DashboardLayout({ title, subtitle, actions, children }: Props) {
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
               <ThemeToggle className="hidden sm:inline-flex" />
-              <Button variant="ghost" size="icon" aria-label="Ajuda" className="hidden sm:inline-flex">
-                <HelpCircle className="h-5 w-5" />
-              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" aria-label="Notificações" className="relative">
