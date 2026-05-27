@@ -29,6 +29,7 @@ interface Tx {
   tipo: "entrada" | "saida";
   valor: number;
   cliente: string;
+  item: string;
 }
 
 const PIE_COLORS = [
@@ -37,6 +38,8 @@ const PIE_COLORS = [
 ];
 
 const formatBRL = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const escapeCSV = (value: string) => `"${value.replace(/"/g, '""')}"`;
+const escapeHTML = (value: string) => value.replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char] ?? char));
 const toISODate = (d: Date) => d.toISOString().slice(0, 10);
 const firstOfMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1);
 const lastOfMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth() + 1, 0);
@@ -67,7 +70,7 @@ const Relatorios = () => {
 
     const [sales, expenses, salesPrev, expensesPrev] = await Promise.all([
       supabase.from("sales")
-        .select("id, sold_at, total, notes, status, customers(name)")
+        .select("id, sold_at, total, notes, status, customers(name), sale_items(product_name, quantity)")
         .eq("user_id", user.id).gte("sold_at", fromISO).lte("sold_at", toISO)
         .order("sold_at", { ascending: false }),
       supabase.from("expenses")
@@ -87,6 +90,10 @@ const Relatorios = () => {
     const txs: Tx[] = [];
     (sales.data || []).forEach((s: any) => {
       if (s.status === "cancelada") return;
+      const saleItems = Array.isArray(s.sale_items) ? s.sale_items : [];
+      const item = saleItems.length
+        ? saleItems.map((i: any) => `${i.product_name}${Number(i.quantity || 0) > 1 ? ` x${i.quantity}` : ""}`).join(", ")
+        : s.notes || "Venda";
       txs.push({
         id: `s-${s.id}`,
         data: new Date(s.sold_at),
@@ -94,7 +101,8 @@ const Relatorios = () => {
         cat: "Vendas",
         tipo: "entrada",
         valor: Number(s.total),
-        cliente: s.customers?.name || "—",
+        cliente: s.customers?.name || "-",
+        item,
       });
     });
     (expenses.data || []).forEach((e: any) => {
@@ -105,7 +113,8 @@ const Relatorios = () => {
         cat: e.category || "Outros",
         tipo: "saida",
         valor: Number(e.amount),
-        cliente: "—",
+        cliente: "-",
+        item: e.description,
       });
     });
     txs.sort((a, b) => b.data.getTime() - a.data.getTime());
@@ -114,10 +123,10 @@ const Relatorios = () => {
     const prev: Tx[] = [];
     (salesPrev.data || []).forEach((s: any) => {
       if (s.status === "cancelada") return;
-      prev.push({ id: "", data: prevFrom, desc: "", cat: "Vendas", tipo: "entrada", valor: Number(s.total), cliente: "" });
+      prev.push({ id: "", data: prevFrom, desc: "", cat: "Vendas", tipo: "entrada", valor: Number(s.total), cliente: "", item: "" });
     });
     (expensesPrev.data || []).forEach((e: any) => {
-      prev.push({ id: "", data: new Date(e.expense_date), desc: "", cat: e.category || "Outros", tipo: "saida", valor: Number(e.amount), cliente: "" });
+      prev.push({ id: "", data: new Date(e.expense_date), desc: "", cat: e.category || "Outros", tipo: "saida", valor: Number(e.amount), cliente: "", item: "" });
     });
     setTxAnterior(prev);
     setLoading(false);
@@ -146,7 +155,7 @@ const Relatorios = () => {
     if (categoria !== "all" && t.cat !== categoria) return false;
     if (busca) {
       const q = busca.toLowerCase();
-      if (!t.desc.toLowerCase().includes(q) && !t.cliente.toLowerCase().includes(q) && !t.cat.toLowerCase().includes(q)) return false;
+      if (!t.desc.toLowerCase().includes(q) && !t.item.toLowerCase().includes(q) && !t.cliente.toLowerCase().includes(q) && !t.cat.toLowerCase().includes(q)) return false;
     }
     return true;
   }), [transacoes, tipo, categoria, busca]);
@@ -173,12 +182,14 @@ const Relatorios = () => {
   ];
 
   const downloadCSV = () => {
-    const header = ["Data", "Descrição", "Cliente/Fornecedor", "Categoria", "Tipo", "Valor"];
+    const header = ["Data", "Descricao", "Item vendido/gasto", "Cliente/Fornecedor", "Categoria", "Tipo", "Valor"];
     const rows = filtradas.map(t => [
       t.data.toLocaleDateString("pt-BR"),
-      `"${t.desc.replace(/"/g, '""')}"`,
-      `"${t.cliente.replace(/"/g, '""')}"`,
-      t.cat, t.tipo,
+      escapeCSV(t.desc),
+      escapeCSV(t.item),
+      escapeCSV(t.cliente),
+      t.cat,
+      t.tipo,
       t.valor.toFixed(2).replace(".", ","),
     ]);
     const csv = "\ufeff" + [header.join(";"), ...rows.map(r => r.join(";"))].join("\n");
@@ -195,25 +206,28 @@ const Relatorios = () => {
     if (!w) return;
     const rows = filtradas.map(t => `<tr>
       <td>${t.data.toLocaleDateString("pt-BR")}</td>
-      <td>${t.desc}</td><td>${t.cliente}</td><td>${t.cat}</td>
+      <td>${escapeHTML(t.desc)}</td>
+      <td>${escapeHTML(t.item)}</td>
+      <td>${escapeHTML(t.cliente)}</td>
+      <td>${escapeHTML(t.cat)}</td>
       <td style="text-align:right;color:${t.tipo === "entrada" ? "#0a7b3e" : "#b91c1c"}">
         ${t.tipo === "entrada" ? "+" : "-"}${formatBRL(t.valor)}
       </td></tr>`).join("");
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Relatório</title>
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Relatorio</title>
       <style>body{font-family:system-ui,sans-serif;padding:24px;color:#111}
       h1{margin:0 0 4px}.muted{color:#666;font-size:12px}
       table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}
       th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
       th{background:#f5f5f5}</style></head><body>
-      <h1>Relatório Financeiro</h1>
-      <p class="muted">Período: ${new Date(dateFrom).toLocaleDateString("pt-BR")} – ${new Date(dateTo).toLocaleDateString("pt-BR")}</p>
-      <p><strong>Entradas:</strong> ${formatBRL(totalEntradas)} &nbsp; <strong>Saídas:</strong> ${formatBRL(totalSaidas)} &nbsp; <strong>Saldo:</strong> ${formatBRL(totalEntradas - totalSaidas)}</p>
-      <table><thead><tr><th>Data</th><th>Descrição</th><th>Cliente</th><th>Categoria</th><th style="text-align:right">Valor</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="5">Sem dados</td></tr>'}</tbody></table>
+      <h1>Relatorio Financeiro</h1>
+      <p class="muted">Periodo: ${new Date(dateFrom).toLocaleDateString("pt-BR")} - ${new Date(dateTo).toLocaleDateString("pt-BR")}</p>
+      <p><strong>Entradas:</strong> ${formatBRL(totalEntradas)} &nbsp; <strong>Saidas:</strong> ${formatBRL(totalSaidas)} &nbsp; <strong>Saldo:</strong> ${formatBRL(totalEntradas - totalSaidas)}</p>
+      <table><thead><tr><th>Data</th><th>Descricao</th><th>Item vendido/gasto</th><th>Cliente</th><th>Categoria</th><th style="text-align:right">Valor</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6">Sem dados</td></tr>'}</tbody></table>
       <script>window.onload=()=>setTimeout(()=>window.print(),300)</script>
       </body></html>`);
     w.document.close();
-    toast.success("PDF pronto para impressão");
+    toast.success("PDF pronto para impressao");
   };
 
   const resetFiltros = () => {
@@ -394,6 +408,7 @@ const Relatorios = () => {
               <TableRow className="bg-muted/40 hover:bg-muted/40">
                 <TableHead className="font-bold">Data</TableHead>
                 <TableHead className="font-bold">Descrição</TableHead>
+                <TableHead className="font-bold">Item vendido/gasto</TableHead>
                 <TableHead className="font-bold">Cliente/Fornecedor</TableHead>
                 <TableHead className="font-bold">Categoria</TableHead>
                 <TableHead className="font-bold text-right">Valor</TableHead>
@@ -404,6 +419,7 @@ const Relatorios = () => {
                 <TableRow key={t.id} className="hover:bg-muted/30 transition-smooth">
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.data.toLocaleDateString("pt-BR")}</TableCell>
                   <TableCell className="font-semibold">{t.desc}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{t.item}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{t.cliente}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="bg-muted text-foreground border-0">{t.cat}</Badge>
@@ -415,7 +431,7 @@ const Relatorios = () => {
               ))}
               {filtradas.length === 0 && !loading && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-8">
+                  <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
                     Nenhuma transação encontrada
                   </TableCell>
                 </TableRow>
