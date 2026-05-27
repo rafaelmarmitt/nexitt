@@ -436,11 +436,11 @@ const Index = () => {
               <Trophy className="h-5 w-5" />
               <p className="text-xs font-bold uppercase tracking-wider">Sequência atual</p>
             </div>
-            <p className="text-4xl font-extrabold">12 dias 🔥</p>
+            <p className="text-4xl font-extrabold">{streak} {streak === 1 ? "dia" : "dias"} 🔥</p>
             <p className="text-sm text-foreground/85 mt-1 mb-4">registrando vendas no bot</p>
             <div className="flex gap-1">
               {[...Array(7)].map((_, i) => (
-                <div key={i} className={`h-2 flex-1 rounded-full ${i < 5 ? "bg-foreground" : "bg-foreground/30"}`} />
+                <div key={i} className={`h-2 flex-1 rounded-full ${i < Math.min(streak, 7) ? "bg-foreground" : "bg-foreground/30"}`} />
               ))}
             </div>
           </div>
