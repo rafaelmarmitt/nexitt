@@ -24,6 +24,7 @@ import { MockBadge } from "@/components/MockBadge";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { EmptyState } from "@/components/EmptyState";
 import { DasAlertCard } from "@/components/DasAlertCard";
+import { NewSaleDialog } from "@/components/NewSaleDialog";
 import mascot from "@/assets/mascot.png";
 
 const fluxoCaixa = [
