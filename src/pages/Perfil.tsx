@@ -309,21 +309,21 @@ const Perfil = () => {
                 <div className="h-11 w-11 rounded-2xl bg-coral-soft flex items-center justify-center">
                   <CreditCard className="h-5 w-5 text-coral" />
                 </div>
-                <h2 className="text-base font-bold">Plano e cobrança</h2>
+                <h2 className="text-base font-bold">Plano e cobranca</h2>
               </div>
               <div className="rounded-2xl gradient-hero p-5 text-primary-foreground mb-4 relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-success/30 blur-2xl animate-blob" />
                 <div className="relative">
                   <Badge className="bg-white/20 text-white border-0 mb-2">Plano Atual</Badge>
                   <p className="text-2xl font-extrabold mb-1">Free Forever</p>
-                  <p className="text-sm opacity-90">100 mensagens/mês · 1 número</p>
+                  <p className="text-sm opacity-90">100 mensagens/mes - 1 numero</p>
                 </div>
               </div>
               <Button variant="hero" className="w-full">
                 <Sparkles className="h-4 w-4" /> Upgrade para Pro - R$ 50/mes
               </Button>
               <p className="text-[11px] text-muted-foreground text-center mt-3">
-                Mensagens ilimitadas · Múltiplos números · IA avançada
+                Mensagens ilimitadas - Multiplos numeros - IA avancada
               </p>
             </Card>
           </div>
