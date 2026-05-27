@@ -270,7 +270,7 @@ const Perfil = () => {
                 </div>
               </div>
               <Button variant="hero" className="w-full">
-                <Sparkles className="h-4 w-4" /> Upgrade para Pro — R$ 29/mês
+                <Sparkles className="h-4 w-4" /> Upgrade para Pro � R$ 50/m�s
               </Button>
               <p className="text-[11px] text-muted-foreground text-center mt-3">
                 Mensagens ilimitadas · Múltiplos números · IA avançada
