@@ -7,11 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Building2, Target, Save, Trophy, Award, Sparkles, Bell,
+  Building2, Target, Save, Trophy, Award, Sparkles,
   CreditCard, Lock, Palette
 } from "lucide-react";
 import { toast } from "sonner";
@@ -228,32 +227,6 @@ const Perfil = () => {
               </div>
               <ThemeToggle variant="segmented" />
             </Card>
-            <Card className="p-6 shadow-card">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="h-11 w-11 rounded-2xl bg-info-soft flex items-center justify-center">
-                  <Bell className="h-5 w-5 text-info" />
-                </div>
-                <h2 className="text-base font-bold">Notificações</h2>
-              </div>
-              <div className="space-y-3">
-                {[
-                  { label: "Nova venda registrada", desc: "Receber notificação no WhatsApp" },
-                  { label: "DAS próximo do vencimento", desc: "Avisar 5 dias antes" },
-                  { label: "Meta mensal próxima", desc: "Quando faltar 10% para bater" },
-                  { label: "Resumo semanal", desc: "Toda segunda às 9h" },
-                  { label: "Limite MEI próximo", desc: "Alerta ao atingir 80% do teto" },
-                ].map((n) => (
-                  <div key={n.label} className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border">
-                    <div>
-                      <p className="text-sm font-semibold">{n.label}</p>
-                      <p className="text-xs text-muted-foreground">{n.desc}</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                ))}
-              </div>
-            </Card>
-
             <Card className="p-6 shadow-card">
               <div className="flex items-center gap-3 mb-5">
                 <div className="h-11 w-11 rounded-2xl bg-coral-soft flex items-center justify-center">
