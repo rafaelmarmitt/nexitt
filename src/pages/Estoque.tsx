@@ -85,9 +85,14 @@ export default function Estoque() {
       title="Estoque"
       subtitle="Controle do que entra e sai"
       actions={
-        <Button variant="hero" className="rounded-xl">
-          <Plus className="h-4 w-4" /> Adicionar item
-        </Button>
+        <NewInventoryItemDialog
+          onCreated={load}
+          trigger={
+            <Button variant="hero" className="rounded-xl">
+              <Plus className="h-4 w-4" /> Adicionar item
+            </Button>
+          }
+        />
       }
     >
       <div className="mb-4"><MockBadge show={isMock} /></div>
