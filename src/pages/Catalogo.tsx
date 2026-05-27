@@ -56,7 +56,7 @@ const Catalogo = () => {
   const { data: produtos, isMock: produtosMock, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
     "products", PRODUTOS_MOCK, { orderBy: { column: "created_at", ascending: false } }
   );
-  const { data: clientes, isMock: clientesMock } = useSupabaseTable<ClienteRow>(
+  const { data: clientes, isMock: clientesMock, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
     "customers", CLIENTES_MOCK, { orderBy: { column: "total_spent", ascending: false } }
   );
 
