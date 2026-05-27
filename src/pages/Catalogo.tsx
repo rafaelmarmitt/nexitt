@@ -61,24 +61,51 @@ const Catalogo = () => {
   );
 
   const [open, setOpen] = useState(false);
-  const [novo, setNovo] = useState({ nome: "", preco: "", categoria: "", emoji: "📦" });
+  const [savingProd, setSavingProd] = useState(false);
+  const [novo, setNovo] = useState({ nome: "", preco: "", custo: "", categoria: "", emoji: "📦", quantidade: "0", minimo: "0" });
   const [busca, setBusca] = useState("");
   const [buscaCli, setBuscaCli] = useState("");
+
+  const lucro = Number(novo.preco || 0) - Number(novo.custo || 0);
+  const margem = Number(novo.preco || 0) > 0 ? ((lucro / Number(novo.preco || 0)) * 100) : 0;
 
   const adicionar = async () => {
     if (!novo.nome || !novo.preco) return toast.error("Preencha nome e preço");
     if (!user) return toast.error("Faça login para adicionar produtos");
-    const { error } = await supabase.from("products").insert({
-      user_id: user.id,
-      name: novo.nome,
-      price: parseFloat(novo.preco),
-      category: novo.categoria || "Outros",
-      image_url: novo.emoji,
+
+    setSavingProd(true);
+    const { data: prod, error: prodErr } = await supabase
+      .from("products")
+      .insert({
+        user_id: user.id,
+        name: novo.nome,
+        price: parseFloat(novo.preco),
+        cost: parseFloat(novo.custo || "0"),
+        category: novo.categoria || "Outros",
+        image_url: novo.emoji,
+        active: true,
+        is_service: false,
+      })
+      .select()
+      .single();
+
+    if (prodErr || !prod) {
+      setSavingProd(false);
+      return toast.error(prodErr?.message || "Erro ao criar produto");
+    }
+
+    const { error: invErr } = await supabase.from("inventory").insert({
+      product_id: prod.id,
+      quantity: Number(novo.quantidade || 0),
+      min_quantity: Number(novo.minimo || 0),
     });
-    if (error) return toast.error(error.message);
-    setNovo({ nome: "", preco: "", categoria: "", emoji: "📦" });
+
+    setSavingProd(false);
+    if (invErr) return toast.error(invErr.message);
+
+    setNovo({ nome: "", preco: "", custo: "", categoria: "", emoji: "📦", quantidade: "0", minimo: "0" });
     setOpen(false);
-    toast.success("Produto adicionado ao catálogo!");
+    toast.success("Produto e estoque cadastrados!");
     refetchProdutos();
   };
 
@@ -154,28 +181,53 @@ const Catalogo = () => {
                   <DialogTrigger asChild>
                     <Button variant="success" className="rounded-xl shrink-0"><Plus className="h-4 w-4" /> Novo</Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="sm:max-w-md">
                     <DialogHeader><DialogTitle>Adicionar produto</DialogTitle></DialogHeader>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
+                    <div className="space-y-3">
+                      <div className="grid gap-2">
                         <Label htmlFor="emoji">Emoji</Label>
                         <Input id="emoji" value={novo.emoji} onChange={(e) => setNovo({ ...novo, emoji: e.target.value })} maxLength={2} />
                       </div>
-                      <div className="space-y-2">
+                      <div className="grid gap-2">
                         <Label htmlFor="n">Nome</Label>
                         <Input id="n" value={novo.nome} onChange={(e) => setNovo({ ...novo, nome: e.target.value })} placeholder="Ex: Bolo de chocolate" />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="p">Preço (R$)</Label>
-                        <Input id="p" type="number" value={novo.preco} onChange={(e) => setNovo({ ...novo, preco: e.target.value })} placeholder="120,00" />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="grid gap-2">
+                          <Label htmlFor="custo">Custo (R$)</Label>
+                          <Input id="custo" type="number" min="0" step="0.01" value={novo.custo} onChange={(e) => setNovo({ ...novo, custo: e.target.value })} placeholder="80,00" />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="preco">Preço venda (R$)</Label>
+                          <Input id="preco" type="number" min="0" step="0.01" value={novo.preco} onChange={(e) => setNovo({ ...novo, preco: e.target.value })} placeholder="120,00" />
+                        </div>
                       </div>
-                      <div className="space-y-2">
+                      {Number(novo.preco || 0) > 0 && (
+                        <div className={`flex items-center justify-between px-3 py-2 rounded-lg border text-sm font-medium ${lucro >= 0 ? "bg-success-soft border-success/20 text-success-deep" : "bg-destructive-soft border-destructive/20 text-destructive"}`}>
+                          <span>Lucro / unidade</span>
+                          <span>R$ {lucro.toFixed(2)} ({margem.toFixed(0)}% margem)</span>
+                        </div>
+                      )}
+                      <div className="grid gap-2">
                         <Label htmlFor="c">Categoria</Label>
                         <Input id="c" value={novo.categoria} onChange={(e) => setNovo({ ...novo, categoria: e.target.value })} placeholder="Bolos" />
                       </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="grid gap-2">
+                          <Label htmlFor="qtd">Estoque inicial</Label>
+                          <Input id="qtd" type="number" min="0" step="1" value={novo.quantidade} onChange={(e) => setNovo({ ...novo, quantidade: e.target.value })} placeholder="0" />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="min">Mínimo alerta</Label>
+                          <Input id="min" type="number" min="0" step="1" value={novo.minimo} onChange={(e) => setNovo({ ...novo, minimo: e.target.value })} placeholder="0" />
+                        </div>
+                      </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="success" onClick={adicionar}>Adicionar ao catálogo</Button>
+                      <Button variant="ghost" onClick={() => setOpen(false)} disabled={savingProd}>Cancelar</Button>
+                      <Button variant="success" onClick={adicionar} disabled={savingProd}>
+                        {savingProd ? "Salvando…" : "Adicionar ao catálogo"}
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
