@@ -13,13 +13,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Activity,
   Bot,
-  CheckCheck,
   Clock,
   MessageCircle,
-  MessageSquareText,
   RefreshCw,
   Save,
-  Send,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -299,7 +296,6 @@ const WhatsAppPage = () => {
         <Tabs defaultValue="conexao" className="w-full">
           <TabsList className="mb-5 bg-card border border-border p-1 rounded-xl">
             <TabsTrigger value="conexao" className="rounded-lg data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground">Conexao</TabsTrigger>
-            <TabsTrigger value="conversa" className="rounded-lg data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground">Mensagens</TabsTrigger>
             <TabsTrigger value="comandos" className="rounded-lg data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground">Comandos</TabsTrigger>
           </TabsList>
 
@@ -358,75 +354,6 @@ const WhatsAppPage = () => {
               </Card>
             </div>
           </TabsContent>
-
-          <TabsContent value="conversa" className="mt-0">
-            <div className="grid gap-5 lg:grid-cols-3">
-              <Card className="p-0 shadow-card lg:col-span-2 overflow-hidden">
-                <div className="bg-whatsapp text-white px-4 py-3 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                    <Bot className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-sm">Conta.AI Bot</p>
-                    <p className="text-[11px] opacity-90 flex items-center gap-1">
-                      <span className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-success animate-pulse" : "bg-white/60"}`} />
-                      {connected ? "online" : "aguardando conexao"}
-                    </p>
-                  </div>
-                  <Badge className="bg-white/20 text-white border-0 text-[10px]">Realtime</Badge>
-                </div>
-                <div
-                  className="p-5 space-y-3 min-h-[420px] max-h-[500px] overflow-y-auto scrollbar-thin"
-                  style={{
-                    backgroundImage: `radial-gradient(hsl(var(--whatsapp) / 0.06) 1px, transparent 1px)`,
-                    backgroundSize: "20px 20px",
-                    backgroundColor: "hsl(var(--whatsapp-soft) / 0.3)",
-                  }}
-                >
-                  {messages.length === 0 ? (
-                    <div className="h-full min-h-[360px] flex items-center justify-center text-center text-sm text-muted-foreground">
-                      Nenhuma mensagem processada ainda.
-                    </div>
-                  ) : (
-                    [...messages].reverse().map((message) => (
-                      <div key={message.id} className={`flex ${message.direction === "inbound" ? "justify-end" : "justify-start"} animate-fade-in group`}>
-                        <div className="max-w-[80%] relative">
-                          <div
-                            className={`relative px-3.5 py-2.5 rounded-2xl shadow-soft ${
-                              message.direction === "inbound"
-                                ? "bg-success text-success-foreground rounded-tr-sm"
-                                : "bg-card text-foreground rounded-tl-sm"
-                            }`}
-                          >
-                            <p className="text-sm whitespace-pre-line leading-relaxed">{message.body || `[${message.message_type}]`}</p>
-                            <div className={`flex items-center gap-1 justify-end mt-1 text-[10px] ${message.direction === "inbound" ? "text-success-foreground/70" : "text-muted-foreground"}`}>
-                              <span>{formatTime(message.created_at)}</span>
-                              {message.direction === "inbound" && <CheckCheck className="h-3 w-3" />}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </Card>
-
-              <Card className="p-5 shadow-card">
-                <div className="flex items-center gap-2 mb-4">
-                  <MessageSquareText className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-bold">Arquitetura ativa</h3>
-                </div>
-                <div className="space-y-3 text-xs text-muted-foreground">
-                  <p>Webhook Z-API recebe mensagens do WhatsApp conectado.</p>
-                  <p>Switch separa texto, audio, imagem e fallback.</p>
-                  <p>Gemini 2.5 Flash-Lite transcreve audio e interpreta imagem antes do Agent.</p>
-                  <p>Wait + Aggregate juntam mensagens enviadas em sequencia.</p>
-                  <p>Supabase grava vendas, despesas, agenda, produtos, DAS e historico.</p>
-                </div>
-              </Card>
-            </div>
-          </TabsContent>
-
           <TabsContent value="comandos" className="mt-0">
             <Card className="p-6 shadow-card">
               <div className="flex items-start gap-3 mb-5 flex-wrap">
