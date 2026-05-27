@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -19,9 +20,13 @@ import { AvatarUpload } from "@/components/AvatarUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAchievements } from "@/hooks/useAchievements";
+import { supabase } from "@/integrations/supabase/client";
+
+const formatBRL = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const MES_ABBR = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
 const Perfil = () => {
-  const { profile } = useAuth();
+  const { profile, user, refreshProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const validTabs = ["dados", "metas", "conquistas", "config"];
@@ -31,11 +36,90 @@ const Perfil = () => {
   const businessName = profile?.business_name || "Configure seu negócio";
   const initial = displayName.charAt(0).toUpperCase();
 
-  const meta = 8000;
-  const atual = 7300;
-  const pct = Math.round((atual / meta) * 100);
+  const [goalInput, setGoalInput] = useState("");
+  const [savingGoal, setSavingGoal] = useState(false);
+  const [monthRevenue, setMonthRevenue] = useState(0);
+  const [goalHistory, setGoalHistory] = useState<Array<{ mes: string; meta: number; real: number; ok: boolean }>>([]);
+
+  const meta = profile?.monthly_goal && profile.monthly_goal > 0 ? Number(profile.monthly_goal) : 8000;
+  const atual = monthRevenue;
+  const pct = meta > 0 ? Math.min(Math.round((atual / meta) * 100), 100) : 0;
+  const faltam = Math.max(meta - atual, 0);
+  const currentMonthName = MES_ABBR[new Date().getMonth()];
 
   const { achievements: conquistas, loading: conquistasLoading } = useAchievements();
+
+  useEffect(() => {
+    setGoalInput(String(profile?.monthly_goal && profile.monthly_goal > 0 ? profile.monthly_goal : 8000));
+  }, [profile?.monthly_goal]);
+
+  useEffect(() => {
+    const loadGoalData = async () => {
+      if (!user) return;
+
+      const now = new Date();
+      const fiveMonthsStart = new Date(now.getFullYear(), now.getMonth() - 4, 1);
+      const { data, error } = await supabase
+        .from("sales")
+        .select("total,sold_at,status")
+        .eq("user_id", user.id)
+        .neq("status", "cancelada")
+        .gte("sold_at", fiveMonthsStart.toISOString());
+
+      if (error) {
+        toast.error("Erro ao carregar metas");
+        return;
+      }
+
+      const totals = new Map<string, number>();
+      for (let i = 4; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        totals.set(`${date.getFullYear()}-${date.getMonth()}`, 0);
+      }
+
+      (data || []).forEach((sale: any) => {
+        const date = new Date(sale.sold_at);
+        const key = `${date.getFullYear()}-${date.getMonth()}`;
+        if (totals.has(key)) {
+          totals.set(key, (totals.get(key) || 0) + Number(sale.total || 0));
+        }
+      });
+
+      const currentKey = `${now.getFullYear()}-${now.getMonth()}`;
+      setMonthRevenue(totals.get(currentKey) || 0);
+      setGoalHistory(Array.from(totals.entries()).map(([key, real]) => {
+        const [, month] = key.split("-").map(Number);
+        return { mes: MES_ABBR[month], meta, real, ok: real >= meta };
+      }));
+    };
+
+    loadGoalData();
+  }, [meta, user]);
+
+  const saveMonthlyGoal = async () => {
+    if (!user) return;
+
+    const nextGoal = Number(goalInput);
+    if (!Number.isFinite(nextGoal) || nextGoal < 100 || nextGoal > 81000) {
+      toast.error("Defina uma meta entre R$ 100 e R$ 81.000");
+      return;
+    }
+
+    setSavingGoal(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ monthly_goal: nextGoal })
+      .eq("user_id", user.id);
+
+    setSavingGoal(false);
+    if (error) {
+      toast.error("Erro ao atualizar meta");
+      return;
+    }
+
+    await refreshProfile();
+    toast.success("Meta atualizada!");
+  };
 
   return (
     <>
@@ -122,22 +206,22 @@ const Perfil = () => {
                     <Target className="h-5 w-5 text-success-foreground" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold">Meta mensal — Junho</h2>
+                    <h2 className="text-base font-bold">Meta mensal — {currentMonthName}</h2>
                     <p className="text-xs text-muted-foreground">Faturamento bruto</p>
                   </div>
                 </div>
-                <p className="text-5xl font-extrabold text-gradient-primary">R$ {atual.toLocaleString("pt-BR")}</p>
-                <p className="text-sm text-muted-foreground mb-5">de R$ {meta.toLocaleString("pt-BR")}</p>
+                <p className="text-5xl font-extrabold text-gradient-primary">{formatBRL(atual)}</p>
+                <p className="text-sm text-muted-foreground mb-5">de {formatBRL(meta)}</p>
                 <Progress value={pct} className="h-4 mb-3" />
                 <div className="flex items-center justify-between mb-6">
                   <p className="text-sm font-bold text-success-deep">{pct}% concluído 🎯</p>
-                  <p className="text-sm text-muted-foreground">Faltam <span className="font-bold text-foreground">R$ {(meta - atual).toLocaleString("pt-BR")}</span></p>
+                  <p className="text-sm text-muted-foreground">Faltam <span className="font-bold text-foreground">{formatBRL(faltam)}</span></p>
                 </div>
                 <div className="space-y-3 max-w-md">
                   <Label htmlFor="meta">Definir nova meta (R$)</Label>
                   <div className="flex gap-2">
-                    <Input id="meta" type="number" defaultValue={meta} />
-                    <Button variant="success" onClick={() => toast.success("Meta atualizada!")}>Atualizar</Button>
+                    <Input id="meta" type="number" min={100} max={81000} step={50} value={goalInput} onChange={(e) => setGoalInput(e.target.value)} />
+                    <Button variant="success" onClick={saveMonthlyGoal} disabled={savingGoal}>{savingGoal ? "Salvando..." : "Atualizar"}</Button>
                   </div>
                 </div>
               </div>
@@ -146,13 +230,7 @@ const Perfil = () => {
             <Card className="p-6 shadow-card">
               <h3 className="text-base font-bold mb-4">Histórico de metas</h3>
               <div className="space-y-3">
-                {[
-                  { mes: "Maio", meta: 7000, real: 6100, ok: false },
-                  { mes: "Abril", meta: 6000, real: 4900, ok: false },
-                  { mes: "Março", meta: 5000, real: 5200, ok: true },
-                  { mes: "Fev", meta: 4000, real: 3800, ok: false },
-                  { mes: "Jan", meta: 4000, real: 4200, ok: true },
-                ].map((m) => (
+                {goalHistory.map((m) => (
                   <div key={m.mes} className="flex items-center gap-3">
                     <span className="text-sm font-semibold w-12">{m.mes}</span>
                     <div className="flex-1">
