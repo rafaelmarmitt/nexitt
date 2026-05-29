@@ -79,7 +79,7 @@ export default function Auth() {
 
   return (
     <>
-      <Seo title="Entrar ou criar conta · Conta.AI" description="Acesse sua conta Conta.AI ou crie uma grátis em 30 segundos. Gerencie seu MEI direto pelo WhatsApp." path="/auth" />
+      <Seo title="Entrar ou criar conta · Nexitt" description="Acesse sua conta Nexitt ou crie uma grátis em 30 segundos. Gerencie seu MEI direto pelo WhatsApp." path="/auth" />
     <div className="min-h-screen flex relative overflow-hidden bg-background">
       {/* Decorative blobs */}
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full gradient-primary opacity-20 blur-3xl animate-blob" />
@@ -88,9 +88,9 @@ export default function Auth() {
       {/* Left – Brand panel */}
       <div className="hidden lg:flex flex-col justify-between p-12 w-1/2 relative z-10 gradient-mesh">
         <div className="flex items-center gap-3">
-          <img src={mascot} alt="Conta.AI" className="h-14 w-14 animate-float" />
+          <img src={mascot} alt="Nexitt" className="h-14 w-14 animate-float" />
           <div>
-            <p className="text-2xl font-extrabold text-gradient-primary">Conta.AI</p>
+            <p className="text-2xl font-extrabold text-gradient-primary">Nexitt</p>
             <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">ERP invisível para MEI</p>
           </div>
         </div>
@@ -119,15 +119,15 @@ export default function Auth() {
           </ul>
         </div>
 
-        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Conta.AI · Feito para o microempreendedor brasileiro</p>
+        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Nexitt · Feito para o microempreendedor brasileiro</p>
       </div>
 
       {/* Right – Form */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <img src={mascot} alt="Conta.AI" className="h-12 w-12 animate-float" />
-            <p className="text-2xl font-extrabold text-gradient-primary">Conta.AI</p>
+            <img src={mascot} alt="Nexitt" className="h-12 w-12 animate-float" />
+            <p className="text-2xl font-extrabold text-gradient-primary">Nexitt</p>
           </div>
 
           <Card className="p-6 md:p-8 rounded-3xl border border-border/60 shadow-glow backdrop-blur-xl bg-card/95">

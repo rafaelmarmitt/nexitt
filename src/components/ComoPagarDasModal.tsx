@@ -33,7 +33,7 @@ export function ComoPagarDasModal({ trigger }: { trigger?: React.ReactNode }) {
             "Informe o seu CNPJ e o código de acesso (ou conta gov.br).",
             "Clique em \"Emitir Guia de Pagamento (DAS)\".",
             "Selecione o mês de referência e gere o boleto / Pix.",
-            "Pague pelo seu banco e, depois, marque como pago aqui no Conta.AI.",
+            "Pague pelo seu banco e, depois, marque como pago aqui no Nexitt.",
           ].map((step, i) => (
             <li key={i} className="flex gap-3">
               <span className="h-6 w-6 rounded-full gradient-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0">

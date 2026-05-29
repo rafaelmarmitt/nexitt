@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Conta.AI — paleta vibrante teal + lime + acentos quentes */
+    /* Nexitt — paleta vibrante teal + lime + acentos quentes */
     --background: 160 25% 97%;
     --foreground: 180 35% 10%;
 
@@ -95,7 +95,7 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Conta.AI dark — base teal profundo com acentos vibrantes */
+    /* Nexitt dark — base teal profundo com acentos vibrantes */
     --background: 192 40% 6%;
     --foreground: 165 25% 95%;
 

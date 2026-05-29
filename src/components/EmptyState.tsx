@@ -13,7 +13,7 @@ interface EmptyStateProps {
 }
 
 /**
- * Estado vazio amigável usando o mascote da Conta.AI.
+ * Estado vazio amigável usando o mascote da Nexitt.
  * Exibido quando uma tabela ou gráfico não tem dados ainda.
  */
 export function EmptyState({ title, description, action, whatsappCta, size = "md" }: EmptyStateProps) {
@@ -28,7 +28,7 @@ export function EmptyState({ title, description, action, whatsappCta, size = "md
     >
       <img
         src={mascot}
-        alt="Mascote Conta.AI"
+        alt="Mascote Nexitt"
         className={`${mascotSize} animate-float drop-shadow-lg`}
         loading="lazy"
       />

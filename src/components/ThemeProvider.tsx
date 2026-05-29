@@ -8,7 +8,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       defaultTheme="light"
       enableSystem
       disableTransitionOnChange={false}
-      storageKey="conta-ai-theme"
+      storageKey="nexitt-theme"
     >
       {children}
     </NextThemesProvider>

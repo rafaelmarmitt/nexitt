@@ -42,7 +42,7 @@ export const SceneHook: React.FC = () => {
           fontSize: 28, fontWeight: 600, letterSpacing: "0.32em",
           color: "#0d7a6f", textTransform: "uppercase", marginBottom: 32,
         }}>
-          Conta<span style={{ color: "#84cc16" }}>.AI</span> &nbsp;•&nbsp; MEI Inteligente
+          Nexitt &nbsp;•&nbsp; MEI Inteligente
         </div>
         <div style={{
           opacity: titleS,

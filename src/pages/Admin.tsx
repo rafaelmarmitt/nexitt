@@ -245,8 +245,8 @@ export default function Admin() {
   const recipientsAvailable = profiles.filter((p) => p.phone && p.phone.length > 5).length;
 
   return (
-    <DashboardLayout title="Admin" subtitle="Saúde e crescimento do Conta.AI">
-      <Seo title="Admin — Conta.AI" description="Painel interno" path="/admin" />
+    <DashboardLayout title="Admin" subtitle="Saúde e crescimento do Nexitt">
+      <Seo title="Admin — Nexitt" description="Painel interno" path="/admin" />
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="mb-6">

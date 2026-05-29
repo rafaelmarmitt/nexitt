@@ -36,10 +36,7 @@ export const SceneClosing: React.FC = () => {
           </svg>
         </div>
         <div style={{ fontSize: 160, fontWeight: 800, letterSpacing: "-0.05em", color: "#0f1f1d", lineHeight: 1 }}>
-          Conta<span style={{
-            background: "linear-gradient(135deg, #14b8a6, #84cc16)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-          }}>.AI</span>
+          Nexitt
         </div>
       </div>
 

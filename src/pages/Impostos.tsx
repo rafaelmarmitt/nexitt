@@ -167,7 +167,7 @@ const Impostos = () => {
 
   return (
     <>
-      <Seo title="Impostos DAS MEI · Conta.AI" description="Acompanhe seu DAS MEI, lembretes automáticos de vencimento e gere o PIX para pagamento sem complicação." path="/impostos" />
+      <Seo title="Impostos DAS MEI · Nexitt" description="Acompanhe seu DAS MEI, lembretes automáticos de vencimento e gere o PIX para pagamento sem complicação." path="/impostos" />
     <DashboardLayout
       title="Impostos — DAS MEI"
       subtitle="Acompanhe os boletos do ano e marque os pagamentos."
@@ -270,7 +270,7 @@ const Impostos = () => {
             </div>
           ) : months.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground rounded-xl bg-muted/30 border border-dashed">
-              Você não tinha conta no Conta.AI em {year}. Selecione um ano a partir do seu cadastro para ver as obrigações.
+              Você não tinha conta no Nexitt em {year}. Selecione um ano a partir do seu cadastro para ver as obrigações.
             </div>
           ) : (
             <div className="space-y-2">

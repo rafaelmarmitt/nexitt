@@ -80,7 +80,7 @@ export default function Estoque() {
 
   return (
     <>
-      <Seo title="Estoque · Conta.AI" description="Controle de estoque para MEI: monitore quantidades, alertas de mínimo e movimentação de produtos." path="/estoque" />
+      <Seo title="Estoque · Nexitt" description="Controle de estoque para MEI: monitore quantidades, alertas de mínimo e movimentação de produtos." path="/estoque" />
     <DashboardLayout
       title="Estoque"
       subtitle="Controle do que entra e sai"

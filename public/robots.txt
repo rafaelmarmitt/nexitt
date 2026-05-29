@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://conta-ai-dash.lovable.app/sitemap.xml
+Sitemap: https://nexitt-dash.lovable.app/sitemap.xml

@@ -55,7 +55,7 @@ export function AppSidebar() {
             <div className="absolute inset-0 gradient-primary rounded-2xl blur-md opacity-40" />
             <img
               src={mascot}
-              alt="Mascote Conta.AI"
+              alt="Mascote Nexitt"
               width={44}
               height={44}
               className="relative h-11 w-11 object-contain animate-float"
@@ -63,7 +63,7 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-base font-extrabold text-gradient-primary leading-tight">Conta.AI</span>
+              <span className="text-base font-extrabold text-gradient-primary leading-tight">Nexitt</span>
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                 {config ? config.label : "ERP invisível"}
               </span>

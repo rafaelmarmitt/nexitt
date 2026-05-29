@@ -251,8 +251,8 @@ const WhatsAppPage = () => {
   return (
     <>
       <Seo
-        title="WhatsApp & Conexao · Conta.AI"
-        description="Conecte seu WhatsApp ao Conta.AI e acompanhe vendas, despesas, agenda e impostos em tempo real."
+        title="WhatsApp & Conexao · Nexitt"
+        description="Conecte seu WhatsApp ao Nexitt e acompanhe vendas, despesas, agenda e impostos em tempo real."
         path="/whatsapp"
       />
       <DashboardLayout
@@ -289,7 +289,7 @@ const WhatsAppPage = () => {
           <Card className="p-5 shadow-card hover-lift">
             <Clock className="h-5 w-5 text-coral mb-2" />
             <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Workflow n8n</p>
-            <p className="text-sm font-bold mt-2 truncate">Conta.AI Z-API WhatsApp Agent</p>
+            <p className="text-sm font-bold mt-2 truncate">Nexitt Z-API WhatsApp Agent</p>
           </Card>
         </div>
 
@@ -308,7 +308,7 @@ const WhatsAppPage = () => {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-base font-bold">Vincular seu WhatsApp</h2>
-                    <p className="text-xs text-muted-foreground">Informe o telefone que vai conversar com o bot Conta.AI.</p>
+                    <p className="text-xs text-muted-foreground">Informe o telefone que vai conversar com o bot Nexitt.</p>
                   </div>
                   <Badge className={connected ? "bg-success-soft text-success-deep border-0" : ""} variant={connected ? "default" : "outline"}>
                     {connected ? "Vinculado" : "Pendente"}

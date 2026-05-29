@@ -1,4 +1,4 @@
--- Connect Conta.AI to the n8n WhatsApp pipeline.
+-- Connect Nexitt to the n8n WhatsApp pipeline.
 
 ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS whatsapp_phone_number_id TEXT,

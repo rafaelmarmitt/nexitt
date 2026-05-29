@@ -238,7 +238,7 @@ export default function Onboarding() {
       await refreshProfile();
       // Move to celebration step (5)
       setStep(5);
-      toast.success("🎉 Tudo pronto! Bem-vindo ao Conta.AI");
+      toast.success("🎉 Tudo pronto! Bem-vindo ao Nexitt");
       // Auto-redirect after celebration
       setTimeout(() => navigate("/dashboard", { replace: true }), 2200);
     } catch (err: any) {
@@ -269,7 +269,7 @@ export default function Onboarding() {
 
   return (
     <>
-      <Seo title="Configurar seu negócio · Conta.AI" description="Configure seu MEI em poucos minutos: tipo de negócio, dados e metas mensais para personalizar seu dashboard." path="/onboarding" />
+      <Seo title="Configurar seu negócio · Nexitt" description="Configure seu MEI em poucos minutos: tipo de negócio, dados e metas mensais para personalizar seu dashboard." path="/onboarding" />
     <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-8 bg-background relative overflow-x-hidden">
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full gradient-primary opacity-20 blur-3xl animate-blob" />
       <div
@@ -281,7 +281,7 @@ export default function Onboarding() {
         {/* Brand */}
         <div className="flex items-center justify-center gap-3 mb-6">
           <img src={mascot} alt="" className="h-12 w-12 animate-float" />
-          <span className="text-xl font-extrabold text-gradient-primary">Conta.AI</span>
+          <span className="text-xl font-extrabold text-gradient-primary">Nexitt</span>
         </div>
 
         {/* Stepper visual (clicável para passos já completados) */}

@@ -29,7 +29,7 @@ const emptyMetrics: Metrics = {
   customersCount: 0,
 };
 
-const getSeenKey = (userId: string) => `conta-ai-achievements-seen:${userId}`;
+const getSeenKey = (userId: string) => `nexitt-achievements-seen:${userId}`;
 
 const readSeen = (userId: string) => {
   try {
@@ -61,7 +61,7 @@ const buildAchievements = (metrics: Metrics): Achievement[] => [
   {
     id: "first_sale",
     titulo: "Primeira venda",
-    desc: "Registre sua primeira venda no Conta.AI",
+    desc: "Registre sua primeira venda no Nexitt",
     emoji: "\u{1F389}",
     done: metrics.salesCount >= 1,
     progress: Math.min(metrics.salesCount, 1),

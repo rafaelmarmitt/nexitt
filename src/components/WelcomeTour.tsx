@@ -110,7 +110,7 @@ export function WelcomeTour() {
               </Badge>
               <DialogHeader className="text-left space-y-0.5">
                 <DialogTitle className="text-lg sm:text-xl">
-                  {step === 0 && "Bem-vindo ao Conta.AI! 👋"}
+                  {step === 0 && "Bem-vindo ao Nexitt! 👋"}
                   {step === 1 && "Comandos do bot 💬"}
                   {step === 2 && "DAS sempre em dia 📑"}
                   {step === 3 && "Defina sua meta mensal 🎯"}
@@ -145,7 +145,7 @@ export function WelcomeTour() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-foreground text-sm leading-tight">
-                      Conecte o seu WhatsApp ao Conta.AI
+                      Conecte o seu WhatsApp ao Nexitt
                     </p>
                     <p className="text-[11px] text-muted-foreground mt-0.5">
                       Leva menos de 1 minuto e é 100% seguro 🔒
@@ -238,7 +238,7 @@ export function WelcomeTour() {
                 <div>
                   <p className="font-bold text-foreground text-sm">Acompanhamento do DAS MEI</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    O Conta.AI lembra-te de pagar o teu DAS. Basta avisares o bot no
+                    O Nexitt lembra-te de pagar o teu DAS. Basta avisares o bot no
                     WhatsApp quando fizeres o pagamento ou atualizares aqui no painel —
                     nós cuidamos do resto.
                   </p>

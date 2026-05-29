@@ -6,7 +6,7 @@ interface SeoProps {
   path: string;
 }
 
-const SITE_URL = "https://conta-ai-dash.lovable.app";
+const SITE_URL = "https://nexitt-dash.lovable.app";
 
 export function Seo({ title, description, path }: SeoProps) {
   const url = `${SITE_URL}${path}`;

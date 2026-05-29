@@ -343,7 +343,7 @@ const Index = () => {
 
   return (
     <>
-      <Seo title="Dashboard · Conta.AI" description="Visão geral do seu MEI: vendas, despesas, fluxo de caixa e impostos em tempo real." path="/dashboard" />
+      <Seo title="Dashboard · Nexitt" description="Visão geral do seu MEI: vendas, despesas, fluxo de caixa e impostos em tempo real." path="/dashboard" />
       <Dialog open={Boolean(activeAchievement)} onOpenChange={(open) => { if (!open) closeAchievementPopup(); }}>
         <DialogContent className="sm:max-w-md text-center overflow-hidden">
           {activeAchievement && (
@@ -404,7 +404,7 @@ const Index = () => {
           <img src={mascot} alt="" className="h-12 w-12 sm:h-14 sm:w-14 shrink-0 animate-float drop-shadow-md" />
           <div className="min-w-0 flex-1">
             <h2 id="welcome-heading" className="text-base sm:text-lg font-extrabold text-foreground">
-              Bem-vindo ao Conta.AI.
+              Bem-vindo ao Nexitt.
             </h2>
             <p className="text-sm text-muted-foreground mt-0.5">
               Seu negócio gerido pelo WhatsApp, visualizado aqui.

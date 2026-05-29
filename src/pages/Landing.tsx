@@ -42,7 +42,7 @@ const Landing = () => {
 
   return (
     <>
-      <Seo title="Conta.AI — ERP invisível para MEI via WhatsApp" description="Gestão financeira simples para MEIs direto no WhatsApp. Controle vendas, despesas, DAS, clientes e produtos com bot integrado." path="/" />
+      <Seo title="Nexitt — ERP invisível para MEI via WhatsApp" description="Gestão financeira simples para MEIs direto no WhatsApp. Controle vendas, despesas, DAS, clientes e produtos com bot integrado." path="/" />
     <div className="min-h-screen bg-background text-foreground font-sans antialiased overflow-x-hidden">
       {/* Barra de progresso de scroll */}
       <motion.div
@@ -54,9 +54,9 @@ const Landing = () => {
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/60">
         <nav className="container mx-auto flex items-center justify-between px-4 md:px-6 py-3">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src={mascot} alt="Conta.AI" width={36} height={36} className="h-9 w-9 object-contain" />
+            <img src={mascot} alt="Nexitt" width={36} height={36} className="h-9 w-9 object-contain" />
             <span className="text-lg font-extrabold tracking-tight">
-              Conta<span className="text-primary">.AI</span>
+              Nexitt
             </span>
           </Link>
           <div className="hidden md:flex items-center gap-7 text-sm font-medium text-muted-foreground">
@@ -119,7 +119,7 @@ const Landing = () => {
               className="relative lg:scale-[1.28] lg:origin-left lg:-mr-20 xl:-mr-28"
             >
               <video
-                src="/conta-ai-hero.mp4?v=4"
+                src="/nexitt-hero.mp4?v=4"
                 poster={heroMockup}
                 autoPlay
                 muted
@@ -129,7 +129,7 @@ const Landing = () => {
                 width={1280}
                 height={720}
                 {...({ fetchpriority: "high" } as any)}
-                aria-label="Demonstração animada do Conta.AI"
+                aria-label="Demonstração animada do Nexitt"
                 className="w-full h-auto aspect-video object-cover"
               />
 
@@ -256,7 +256,7 @@ const Landing = () => {
             >
               <div className="absolute inset-0 gradient-primary rounded-[3rem] blur-3xl opacity-30" />
               <div className="relative bg-background rounded-[2.5rem] p-8 md:p-10 border border-border shadow-card">
-                <img src={mascot} alt="Mascote Conta.AI" width={200} height={200} className="mx-auto h-48 w-48 object-contain animate-float" />
+                <img src={mascot} alt="Mascote Nexitt" width={200} height={200} className="mx-auto h-48 w-48 object-contain animate-float" />
                 <div className="mt-6 text-center">
                   <p className="text-2xl font-extrabold">Olá! Eu sou o Conti 👋</p>
                   <p className="text-sm text-muted-foreground mt-2">Seu contador digital sempre no WhatsApp</p>
@@ -267,7 +267,7 @@ const Landing = () => {
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={fade}
             >
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">Por que Conta.AI</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">Por que Nexitt</span>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-2 leading-tight">
                 Liberdade para focar no <span className="text-gradient-primary">seu negócio</span>
               </h2>
@@ -326,7 +326,7 @@ const Landing = () => {
               },
               {
                 q: "Preciso instalar algum aplicativo?",
-                a: "Não. O Conta.AI funciona 100% pelo WhatsApp que você já usa. Para ver dashboards e relatórios completos, basta acessar nosso site pelo navegador.",
+                a: "Não. O Nexitt funciona 100% pelo WhatsApp que você já usa. Para ver dashboards e relatórios completos, basta acessar nosso site pelo navegador.",
               },
               {
                 q: "Vocês usam IA e tecnologia de ponta?",
@@ -387,9 +387,9 @@ const Landing = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <Link to="/" className="flex items-center gap-2.5">
-                <img src={mascot} alt="Conta.AI" width={36} height={36} className="h-9 w-9 object-contain" />
+                <img src={mascot} alt="Nexitt" width={36} height={36} className="h-9 w-9 object-contain" />
                 <span className="text-lg font-extrabold tracking-tight">
-                  Conta<span className="text-primary">.AI</span>
+                  Nexitt
                 </span>
               </Link>
               <p className="mt-3 text-sm text-muted-foreground max-w-sm">
@@ -427,12 +427,12 @@ const Landing = () => {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-foreground">Política de privacidade</a></li>
                 <li><a href="#" className="hover:text-foreground">Termos de uso</a></li>
-                <li><a href="mailto:contato@conta.ai" className="hover:text-foreground">Contato</a></li>
+                <li><a href="mailto:contato@nexitt.com.br" className="hover:text-foreground">Contato</a></li>
               </ul>
             </div>
           </div>
           <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} Conta.AI. Todos os direitos reservados.</p>
+            <p>© {new Date().getFullYear()} Nexitt. Todos os direitos reservados.</p>
             <p>Feito com 💚 para MEIs do Brasil</p>
           </div>
         </div>

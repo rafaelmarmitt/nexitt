@@ -293,7 +293,7 @@ export default function Agenda() {
 
   return (
     <>
-      <Seo title="Agenda · Conta.AI" description="Organize compromissos, atendimentos e lembretes do seu MEI em um único lugar integrado ao WhatsApp." path="/agenda" />
+      <Seo title="Agenda · Nexitt" description="Organize compromissos, atendimentos e lembretes do seu MEI em um único lugar integrado ao WhatsApp." path="/agenda" />
       <DashboardLayout
         title="Agenda"
         subtitle={config ? `Seus atendimentos de ${config.label.toLowerCase()}` : "Seus atendimentos"}

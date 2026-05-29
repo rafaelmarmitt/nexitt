@@ -130,7 +130,7 @@ export function NewSaleDialog({ trigger, onCreated }: Props) {
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Nova venda</DialogTitle>
-          <DialogDescription>Registre uma venda manualmente no seu Conta.AI</DialogDescription>
+          <DialogDescription>Registre uma venda manualmente no seu Nexitt</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

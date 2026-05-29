@@ -238,7 +238,7 @@ const Relatorios = () => {
 
   return (
     <>
-      <Seo title="Relatórios financeiros · Conta.AI" description="Relatórios mensais prontos para o contador: receitas, despesas, lucro e comparativos do seu MEI." path="/relatorios" />
+      <Seo title="Relatórios financeiros · Nexitt" description="Relatórios mensais prontos para o contador: receitas, despesas, lucro e comparativos do seu MEI." path="/relatorios" />
     <DashboardLayout
       title="Relatórios Financeiros"
       subtitle="Análise detalhada das suas transações"

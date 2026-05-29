@@ -1,8 +1,8 @@
-# Conta.AI
+# Nexitt
 
 > ERP invisível para MEI brasileiro — gestão financeira (vendas, despesas, DAS, clientes e produtos) via WhatsApp com bot integrado.
 
-Conta.AI permite que microempreendedores individuais (MEIs) registrem vendas, controlem despesas, acompanhem o DAS e gerem relatórios mensais conversando com um bot pelo WhatsApp. O dashboard web complementa o WhatsApp com visualizações em tempo real, catálogo de produtos/serviços, agenda e estoque.
+Nexitt permite que microempreendedores individuais (MEIs) registrem vendas, controlem despesas, acompanhem o DAS e gerem relatórios mensais conversando com um bot pelo WhatsApp. O dashboard web complementa o WhatsApp com visualizações em tempo real, catálogo de produtos/serviços, agenda e estoque.
 
 ## Pages
 

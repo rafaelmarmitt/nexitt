@@ -82,7 +82,7 @@ export const SceneWhatsApp: React.FC = () => {
           }}>
             <div style={{ width: 56, height: 56, borderRadius: "50%", background: "#25d366", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 800, color: "white" }}>AI</div>
             <div>
-              <div style={{ fontSize: 28, fontWeight: 700 }}>Conta.AI</div>
+              <div style={{ fontSize: 28, fontWeight: 700 }}>Nexitt</div>
               <div style={{ fontSize: 19, opacity: 0.8 }}>online</div>
             </div>
           </div>
