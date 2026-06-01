@@ -372,6 +372,7 @@ export type Database = {
           whatsapp_onboarding_pending: boolean
           whatsapp_onboarding_sent_at: string | null
           whatsapp_phone_number_id: string | null
+          whatsapp_provider: string
         }
         Insert: {
           avatar_url?: string | null
@@ -393,6 +394,7 @@ export type Database = {
           whatsapp_onboarding_pending?: boolean
           whatsapp_onboarding_sent_at?: string | null
           whatsapp_phone_number_id?: string | null
+          whatsapp_provider?: string
         }
         Update: {
           avatar_url?: string | null
@@ -414,6 +416,7 @@ export type Database = {
           whatsapp_onboarding_pending?: boolean
           whatsapp_onboarding_sent_at?: string | null
           whatsapp_phone_number_id?: string | null
+          whatsapp_provider?: string
         }
         Relationships: []
       }
