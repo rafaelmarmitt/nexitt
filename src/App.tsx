@@ -20,6 +20,8 @@ import Onboarding from "./pages/Onboarding";
 import Agenda from "./pages/Agenda";
 import Estoque from "./pages/Estoque";
 import NotFound from "./pages/NotFound";
+import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
+import TermosDeServico from "./pages/TermosDeServico";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
+            <Route path="/termos-de-servico" element={<TermosDeServico />} />
             <Route
               path="/onboarding"
               element={
