@@ -14,7 +14,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/CopyButton";
 import { NewCustomerDialog } from "@/components/NewCustomerDialog";
-
+import { CardGridSkeleton, ListSkeleton } from "@/components/skeletons";
 import { useSupabaseTable } from "@/hooks/useSupabaseData";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
