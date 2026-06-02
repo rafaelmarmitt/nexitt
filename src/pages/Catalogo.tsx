@@ -36,10 +36,10 @@ interface ClienteRow {
 
 const Catalogo = () => {
   const { user } = useAuth();
-  const { data: produtos, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
+  const { data: produtos, loading: loadingProd, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
     "products", [], { orderBy: { column: "created_at", ascending: false } }
   );
-  const { data: clientes, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
+  const { data: clientes, loading: loadingCli, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
     "customers", [], { orderBy: { column: "total_spent", ascending: false } }
   );
 
