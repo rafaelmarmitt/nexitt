@@ -21,7 +21,7 @@ import { BUSINESS_CONFIGS } from "@/lib/businessTypes";
 import { BusinessWidgets } from "@/components/BusinessWidgets";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MockBadge } from "@/components/MockBadge";
+
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { EmptyState } from "@/components/EmptyState";
 import { DasAlertCard } from "@/components/DasAlertCard";
@@ -30,102 +30,16 @@ import { NewExpenseDialog } from "@/components/NewExpenseDialog";
 import mascot from "@/assets/mascot.png";
 import { useAchievements } from "@/hooks/useAchievements";
 
-const fluxoCaixa = [
-  { mes: "Jan", entradas: 4200, saidas: 2100 },
-  { mes: "Fev", entradas: 3800, saidas: 2400 },
-  { mes: "Mar", entradas: 5200, saidas: 2800 },
-  { mes: "Abr", entradas: 4900, saidas: 2200 },
-  { mes: "Mai", entradas: 6100, saidas: 3100 },
-  { mes: "Jun", entradas: 7300, saidas: 3400 },
-];
+const emptyFluxo = Array.from({ length: 6 }, (_, i) => {
+  const d = new Date();
+  d.setMonth(d.getMonth() - (5 - i));
+  return { mes: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"][d.getMonth()], entradas: 0, saidas: 0 };
+});
 
-const semana = [
-  { dia: "Seg", vendas: 320 },
-  { dia: "Ter", vendas: 480 },
-  { dia: "Qua", vendas: 290 },
-  { dia: "Qui", vendas: 620 },
-  { dia: "Sex", vendas: 890 },
-  { dia: "Sáb", vendas: 1240 },
-  { dia: "Dom", vendas: 740 },
-];
+const emptySemana = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"].map((dia) => ({ dia, vendas: 0 }));
 
-const METRIC_VALUES: Record<string, Record<string, number>> = {
-  comercio:    { faturamento: 7300, ticket: 145, estoque: 240, clientes: 86, despesas: 3400, lucro: 3900, horas: 0, agenda: 0, pedidos: 0 },
-  servicos:    { faturamento: 6800, ticket: 0,   estoque: 0,   clientes: 24, despesas: 1200, lucro: 5600, horas: 68, agenda: 32, pedidos: 0 },
-  alimentacao: { faturamento: 7300, ticket: 58,  estoque: 0,   clientes: 142, despesas: 3400, lucro: 3900, horas: 0, agenda: 0, pedidos: 126 },
-  beleza:      { faturamento: 5400, ticket: 95,  estoque: 0,   clientes: 78, despesas: 1100, lucro: 4300, horas: 0, agenda: 56, pedidos: 0 },
-  outros:      { faturamento: 7300, ticket: 0,   estoque: 0,   clientes: 50, despesas: 3400, lucro: 3900, horas: 0, agenda: 0, pedidos: 0 },
-};
-
-const ACTIVITIES_BY_TYPE: Record<string, Array<{ tipo: "entrada" | "saida"; desc: string; cliente: string; valor: number; hora: string; emoji: string }>> = {
-  comercio: [
-    { tipo: "entrada", desc: "Venda de Tênis Esportivo", cliente: "Maria S.", valor: 280, hora: "Há 5 min", emoji: "👟" },
-    { tipo: "saida", desc: "Compra de Mercadoria", cliente: "Fornecedor A", valor: 1200, hora: "Há 1h", emoji: "📦" },
-    { tipo: "entrada", desc: "Venda Camiseta + Boné", cliente: "João P.", valor: 145, hora: "Há 3h", emoji: "👕" },
-    { tipo: "saida", desc: "Conta de Energia", cliente: "Despesa Fixa", valor: 145, hora: "Ontem", emoji: "⚡" },
-    { tipo: "entrada", desc: "Pix recebido", cliente: "Ana L.", valor: 90, hora: "Ontem", emoji: "💳" },
-  ],
-  servicos: [
-    { tipo: "entrada", desc: "Consultoria 2h", cliente: "Empresa X", valor: 600, hora: "Há 30 min", emoji: "💼" },
-    { tipo: "saida", desc: "Assinatura Notion", cliente: "Despesa Fixa", valor: 49, hora: "Há 2h", emoji: "📝" },
-    { tipo: "entrada", desc: "Mentoria mensal", cliente: "João P.", valor: 800, hora: "Hoje", emoji: "🎯" },
-    { tipo: "entrada", desc: "Projeto site", cliente: "Café Sul", valor: 1500, hora: "Ontem", emoji: "💻" },
-    { tipo: "saida", desc: "Internet escritório", cliente: "Vivo", valor: 120, hora: "Ontem", emoji: "📡" },
-  ],
-  alimentacao: [
-    { tipo: "entrada", desc: "Venda de Bolo Decorado", cliente: "Maria S.", valor: 180, hora: "Há 5 min", emoji: "🎂" },
-    { tipo: "saida", desc: "Compra de Insumos", cliente: "Fornecedor A", valor: 320, hora: "Há 1h", emoji: "🛒" },
-    { tipo: "entrada", desc: "Pagamento Doces Festa", cliente: "João P.", valor: 450, hora: "Há 3h", emoji: "🍰" },
-    { tipo: "saida", desc: "Conta de Energia", cliente: "Despesa Fixa", valor: 145, hora: "Ontem", emoji: "⚡" },
-    { tipo: "entrada", desc: "Encomenda Brigadeiros", cliente: "Ana L.", valor: 90, hora: "Ontem", emoji: "🍫" },
-  ],
-  beleza: [
-    { tipo: "entrada", desc: "Manicure + Pedicure", cliente: "Beatriz S.", valor: 80, hora: "Há 10 min", emoji: "💅" },
-    { tipo: "entrada", desc: "Corte + Escova", cliente: "Carla M.", valor: 110, hora: "Há 2h", emoji: "💇‍♀️" },
-    { tipo: "saida", desc: "Esmaltes + acetona", cliente: "Beauty Shop", valor: 230, hora: "Hoje", emoji: "💄" },
-    { tipo: "entrada", desc: "Pacote Spa dos Pés", cliente: "Diana L.", valor: 180, hora: "Ontem", emoji: "✨" },
-    { tipo: "saida", desc: "Aluguel sala", cliente: "Despesa Fixa", valor: 800, hora: "Ontem", emoji: "🏠" },
-  ],
-  outros: [
-    { tipo: "entrada", desc: "Venda registrada", cliente: "Cliente A", valor: 250, hora: "Há 5 min", emoji: "💰" },
-    { tipo: "saida", desc: "Despesa operacional", cliente: "Fornecedor", valor: 120, hora: "Há 1h", emoji: "📤" },
-    { tipo: "entrada", desc: "Recebimento", cliente: "Cliente B", valor: 480, hora: "Hoje", emoji: "✨" },
-    { tipo: "saida", desc: "Conta mensal", cliente: "Despesa Fixa", valor: 145, hora: "Ontem", emoji: "📋" },
-    { tipo: "entrada", desc: "Pix recebido", cliente: "Cliente C", valor: 90, hora: "Ontem", emoji: "💳" },
-  ],
-};
-
-const TOP_ITEMS_BY_TYPE: Record<string, Array<{ nome: string; vendas: number; total: number; cor: string }>> = {
-  comercio: [
-    { nome: "Tênis esportivo", vendas: 18, total: 5040, cor: "bg-primary" },
-    { nome: "Camiseta básica", vendas: 32, total: 1920, cor: "bg-success" },
-    { nome: "Mochila", vendas: 9, total: 2700, cor: "bg-coral" },
-    { nome: "Boné", vendas: 14, total: 700, cor: "bg-info" },
-  ],
-  servicos: [
-    { nome: "Consultoria mensal", vendas: 8, total: 6400, cor: "bg-primary" },
-    { nome: "Mentoria 1:1", vendas: 12, total: 3600, cor: "bg-success" },
-    { nome: "Projeto site", vendas: 2, total: 3000, cor: "bg-coral" },
-    { nome: "Workshop", vendas: 4, total: 1200, cor: "bg-info" },
-  ],
-  alimentacao: [
-    { nome: "Bolo Decorado", vendas: 28, total: 5040, cor: "bg-primary" },
-    { nome: "Brigadeiros (cento)", vendas: 19, total: 1710, cor: "bg-success" },
-    { nome: "Kit Festa", vendas: 6, total: 2700, cor: "bg-coral" },
-    { nome: "Doce de Leite", vendas: 12, total: 720, cor: "bg-info" },
-  ],
-  beleza: [
-    { nome: "Pacote Spa dos Pés", vendas: 14, total: 2520, cor: "bg-primary" },
-    { nome: "Corte + Escova", vendas: 22, total: 2420, cor: "bg-success" },
-    { nome: "Coloração completa", vendas: 8, total: 1760, cor: "bg-coral" },
-    { nome: "Design sobrancelha", vendas: 30, total: 1500, cor: "bg-info" },
-  ],
-  outros: [
-    { nome: "Item A", vendas: 18, total: 3600, cor: "bg-primary" },
-    { nome: "Item B", vendas: 22, total: 2200, cor: "bg-success" },
-    { nome: "Item C", vendas: 8, total: 1600, cor: "bg-coral" },
-    { nome: "Item D", vendas: 14, total: 980, cor: "bg-info" },
-  ],
+const EMPTY_VALUES: Record<string, number> = {
+  faturamento: 0, ticket: 0, estoque: 0, clientes: 0, despesas: 0, lucro: 0, horas: 0, agenda: 0, pedidos: 0,
 };
 
 const formatBRL = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -153,18 +67,13 @@ const Index = () => {
   const firstName = (profile?.full_name || "").split(" ")[0] || "MEI";
   const businessKey = profile?.business_type ?? "outros";
   const config = BUSINESS_CONFIGS[businessKey];
-  const mockValues = METRIC_VALUES[businessKey];
-  const mockAtividades = ACTIVITIES_BY_TYPE[businessKey];
-  const mockTopProdutos = TOP_ITEMS_BY_TYPE[businessKey];
-
-  const [values, setValues] = useState(mockValues);
-  const [isMock, setIsMock] = useState(true);
-  const [fluxo, setFluxo] = useState(fluxoCaixa);
-  const [semanaData, setSemanaData] = useState(semana);
-  const [semanaTotal, setSemanaTotal] = useState(4580);
-  const [atividades, setAtividades] = useState<Atividade[]>(mockAtividades);
-  const [topProdutos, setTopProdutos] = useState<TopItem[]>(mockTopProdutos);
-  const [streak, setStreak] = useState(12);
+  const [values, setValues] = useState<Record<string, number>>(EMPTY_VALUES);
+  const [fluxo, setFluxo] = useState(emptyFluxo);
+  const [semanaData, setSemanaData] = useState(emptySemana);
+  const [semanaTotal, setSemanaTotal] = useState(0);
+  const [atividades, setAtividades] = useState<Atividade[]>([]);
+  const [topProdutos, setTopProdutos] = useState<TopItem[]>([]);
+  const [streak, setStreak] = useState(0);
   const [insight, setInsight] = useState<string>("Cadastre vendas pelo WhatsApp para ver insights personalizados aqui.");
   const [refreshKey, setRefreshKey] = useState(0);
   const { newlyUnlocked, markSeen } = useAchievements(refreshKey);
