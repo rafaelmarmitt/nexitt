@@ -3,13 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
- * Hook generico que busca dados de uma tabela do Supabase filtrados pelo user_id atual.
- * Se a tabela estiver vazia (ou usuario nao logado), retorna `fallback` e marca `isMock = true`.
- * O dashboard recarrega quando o n8n grava novos dados via WhatsApp.
+ * Hook genérico que busca dados de uma tabela do Supabase filtrados pelo user_id atual.
+ * Retorna sempre dados reais (array vazio quando não há registros).
  */
 export function useSupabaseTable<T>(
   table: "customers" | "products" | "sales" | "appointments" | "expenses" | "taxes",
-  fallback: T[],
+  _fallback: T[] = [],
   options?: {
     orderBy?: { column: string; ascending?: boolean };
     select?: string;
@@ -19,14 +18,12 @@ export function useSupabaseTable<T>(
   const orderByColumn = options?.orderBy?.column;
   const orderByAscending = options?.orderBy?.ascending;
   const select = options?.select;
-  const [data, setData] = useState<T[]>(fallback);
+  const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isMock, setIsMock] = useState(true);
 
   const fetchData = useCallback(async () => {
     if (!user) {
-      setData(fallback);
-      setIsMock(true);
+      setData([]);
       setLoading(false);
       return;
     }
@@ -38,15 +35,13 @@ export function useSupabaseTable<T>(
     }
 
     const { data: rows, error } = await query;
-    if (error || !rows || rows.length === 0) {
-      setData(fallback);
-      setIsMock(true);
+    if (error || !rows) {
+      setData([]);
     } else {
       setData(rows as T[]);
-      setIsMock(false);
     }
     setLoading(false);
-  }, [user, table, fallback, orderByColumn, orderByAscending, select]);
+  }, [user, table, orderByColumn, orderByAscending, select]);
 
   useEffect(() => {
     fetchData();
@@ -69,5 +64,5 @@ export function useSupabaseTable<T>(
     };
   }, [user, table, fetchData]);
 
-  return { data, loading, isMock, refetch: fetchData };
+  return { data, loading, isMock: false, refetch: fetchData };
 }
