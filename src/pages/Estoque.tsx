@@ -9,7 +9,7 @@ import { Box, Plus, AlertTriangle, TrendingDown, Search, Package, Filter } from 
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { MockBadge } from "@/components/MockBadge";
+
 import { NewInventoryItemDialog } from "@/components/NewInventoryItemDialog";
 
 interface ItemEstoque {
@@ -21,15 +21,6 @@ interface ItemEstoque {
   status: "ok" | "baixo" | "esgotado";
 }
 
-const ITENS_MOCK: ItemEstoque[] = [
-  { nome: "Bolo decorado tradicional", categoria: "Bolos", estoque: 12, minimo: 5, preco: 180, status: "ok" },
-  { nome: "Brigadeiro gourmet (cento)", categoria: "Doces", estoque: 3, minimo: 5, preco: 90, status: "baixo" },
-  { nome: "Embalagem kraft 20cm", categoria: "Embalagens", estoque: 240, minimo: 100, preco: 1.5, status: "ok" },
-  { nome: "Forma de papel n°5", categoria: "Embalagens", estoque: 0, minimo: 50, preco: 0.3, status: "esgotado" },
-  { nome: "Kit Festa Infantil", categoria: "Kits", estoque: 8, minimo: 3, preco: 450, status: "ok" },
-  { nome: "Doce de leite (kg)", categoria: "Insumos", estoque: 4, minimo: 5, preco: 32, status: "baixo" },
-  { nome: "Caixa para bolo grande", categoria: "Embalagens", estoque: 60, minimo: 20, preco: 4.5, status: "ok" },
-];
 
 const formatBRL = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -41,18 +32,19 @@ const computeStatus = (qty: number, min: number): ItemEstoque["status"] => {
 
 export default function Estoque() {
   const { user } = useAuth();
-  const [itens, setItens] = useState<ItemEstoque[]>(ITENS_MOCK);
-  const [isMock, setIsMock] = useState(true);
+  const [itens, setItens] = useState<ItemEstoque[]>([]);
 
   const load = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setItens([]);
+      return;
+    }
     const { data } = await supabase
       .from("products")
       .select("name, category, price, inventory(quantity, min_quantity)")
       .eq("user_id", user.id);
-    if (!data || data.length === 0) {
-      setItens(ITENS_MOCK);
-      setIsMock(true);
+    if (!data) {
+      setItens([]);
       return;
     }
     const mapped: ItemEstoque[] = data.map((p: any) => {
@@ -69,7 +61,6 @@ export default function Estoque() {
       };
     });
     setItens(mapped);
-    setIsMock(false);
   }, [user]);
 
   useEffect(() => { load(); }, [load]);
@@ -95,7 +86,7 @@ export default function Estoque() {
         />
       }
     >
-      <div className="mb-4"><MockBadge show={isMock} /></div>
+
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card className="p-5 shadow-card">
