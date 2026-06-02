@@ -555,8 +555,11 @@ const Index = () => {
           </div>
         </Card>
       </div>
+      </>
+      )}
     </DashboardLayout>
     </>
+
   );
 };
 
