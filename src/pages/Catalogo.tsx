@@ -283,6 +283,9 @@ const Catalogo = () => {
                 />
               </div>
             </div>
+            {loadingCli ? (
+              <ListSkeleton rows={5} />
+            ) : (
             <div className="space-y-2">
               {filtrCli.map((c, i) => {
                 const vip = isVip(c);
@@ -331,6 +334,7 @@ const Catalogo = () => {
                 );
               })}
             </div>
+            )}
           </Card>
         </TabsContent>
       </Tabs>
