@@ -319,7 +319,10 @@ const Index = () => {
           </div>
         </div>
       </section>
-
+      {loading ? (
+        <DashboardSkeleton />
+      ) : (
+      <>
       {/* Alerta DAS MEI do mês corrente */}
       <DasAlertCard />
 
