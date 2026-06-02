@@ -93,7 +93,7 @@ const Catalogo = () => {
   };
 
   const remover = async (id: string) => {
-    if (produtosMock) return toast("Mock — adicione produtos reais para remover");
+    
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast("Produto removido");
