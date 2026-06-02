@@ -9,6 +9,7 @@ import { Box, Plus, AlertTriangle, TrendingDown, Search, Package, Filter } from 
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { ListSkeleton, StatCardsSkeleton } from "@/components/skeletons";
 
 import { NewInventoryItemDialog } from "@/components/NewInventoryItemDialog";
 
@@ -33,18 +34,22 @@ const computeStatus = (qty: number, min: number): ItemEstoque["status"] => {
 export default function Estoque() {
   const { user } = useAuth();
   const [itens, setItens] = useState<ItemEstoque[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     if (!user) {
       setItens([]);
+      setLoading(false);
       return;
     }
+    setLoading(true);
     const { data } = await supabase
       .from("products")
       .select("name, category, price, inventory(quantity, min_quantity)")
       .eq("user_id", user.id);
     if (!data) {
       setItens([]);
+      setLoading(false);
       return;
     }
     const mapped: ItemEstoque[] = data.map((p: any) => {
@@ -61,6 +66,7 @@ export default function Estoque() {
       };
     });
     setItens(mapped);
+    setLoading(false);
   }, [user]);
 
   useEffect(() => { load(); }, [load]);
@@ -87,6 +93,13 @@ export default function Estoque() {
       }
     >
 
+      {loading ? (
+        <>
+          <StatCardsSkeleton />
+          <ListSkeleton rows={6} />
+        </>
+      ) : (
+      <>
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card className="p-5 shadow-card">
@@ -170,6 +183,8 @@ export default function Estoque() {
           })}
         </ul>
       </Card>
+      </>
+      )}
     </DashboardLayout>
     </>
   );

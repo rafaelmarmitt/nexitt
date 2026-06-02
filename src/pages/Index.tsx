@@ -21,7 +21,7 @@ import { BUSINESS_CONFIGS } from "@/lib/businessTypes";
 import { BusinessWidgets } from "@/components/BusinessWidgets";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
+import { DashboardSkeleton } from "@/components/skeletons";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { EmptyState } from "@/components/EmptyState";
 import { DasAlertCard } from "@/components/DasAlertCard";
@@ -76,13 +76,15 @@ const Index = () => {
   const [streak, setStreak] = useState(0);
   const [insight, setInsight] = useState<string>("Cadastre vendas pelo WhatsApp para ver insights personalizados aqui.");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(true);
   const { newlyUnlocked, markSeen } = useAchievements(refreshKey);
   const [activeAchievementId, setActiveAchievementId] = useState<string | null>(null);
   const activeAchievement = newlyUnlocked.find((achievement) => achievement.id === activeAchievementId) ?? newlyUnlocked[0] ?? null;
 
   useEffect(() => {
     const load = async () => {
-      if (!user) return;
+      if (!user) { setLoading(false); return; }
+      setLoading(true);
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const sixMonthsStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
@@ -212,6 +214,7 @@ const Index = () => {
       } else if (desp > fat) {
         setInsight(`Atenção: despesas (${formatBRL(desp)}) acima do faturamento. Revise os custos.`);
       }
+      setLoading(false);
     };
     load();
   }, [user, businessKey, refreshKey]);
@@ -316,7 +319,10 @@ const Index = () => {
           </div>
         </div>
       </section>
-
+      {loading ? (
+        <DashboardSkeleton />
+      ) : (
+      <>
       {/* Alerta DAS MEI do mês corrente */}
       <DasAlertCard />
 
@@ -549,8 +555,11 @@ const Index = () => {
           </div>
         </Card>
       </div>
+      </>
+      )}
     </DashboardLayout>
     </>
+
   );
 };
 

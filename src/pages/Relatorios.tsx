@@ -415,26 +415,38 @@ const Relatorios = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtradas.map((t) => (
-                <TableRow key={t.id} className="hover:bg-muted/30 transition-smooth">
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.data.toLocaleDateString("pt-BR")}</TableCell>
-                  <TableCell className="font-semibold">{t.desc}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{t.item}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{t.cliente}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="bg-muted text-foreground border-0">{t.cat}</Badge>
-                  </TableCell>
-                  <TableCell className={`text-right font-extrabold ${t.tipo === "entrada" ? "text-success-deep" : "text-destructive"}`}>
-                    {t.tipo === "entrada" ? "+" : "-"}{formatBRL(t.valor)}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filtradas.length === 0 && !loading && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
-                    Nenhuma transação encontrada
-                  </TableCell>
-                </TableRow>
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <TableRow key={`sk-${i}`}>
+                    {Array.from({ length: 6 }).map((_, c) => (
+                      <TableCell key={c}><div className="h-4 w-full rounded bg-muted animate-pulse" /></TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <>
+                  {filtradas.map((t) => (
+                    <TableRow key={t.id} className="hover:bg-muted/30 transition-smooth">
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.data.toLocaleDateString("pt-BR")}</TableCell>
+                      <TableCell className="font-semibold">{t.desc}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{t.item}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{t.cliente}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="bg-muted text-foreground border-0">{t.cat}</Badge>
+                      </TableCell>
+                      <TableCell className={`text-right font-extrabold ${t.tipo === "entrada" ? "text-success-deep" : "text-destructive"}`}>
+                        {t.tipo === "entrada" ? "+" : "-"}{formatBRL(t.valor)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {filtradas.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+                        Nenhuma transação encontrada
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </>
               )}
             </TableBody>
           </Table>

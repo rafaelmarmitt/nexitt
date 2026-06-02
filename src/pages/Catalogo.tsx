@@ -14,7 +14,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/CopyButton";
 import { NewCustomerDialog } from "@/components/NewCustomerDialog";
-
+import { CardGridSkeleton, ListSkeleton } from "@/components/skeletons";
 import { useSupabaseTable } from "@/hooks/useSupabaseData";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,10 +36,10 @@ interface ClienteRow {
 
 const Catalogo = () => {
   const { user } = useAuth();
-  const { data: produtos, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
+  const { data: produtos, loading: loadingProd, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
     "products", [], { orderBy: { column: "created_at", ascending: false } }
   );
-  const { data: clientes, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
+  const { data: clientes, loading: loadingCli, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
     "customers", [], { orderBy: { column: "total_spent", ascending: false } }
   );
 
@@ -283,6 +283,9 @@ const Catalogo = () => {
                 />
               </div>
             </div>
+            {loadingCli ? (
+              <ListSkeleton rows={5} />
+            ) : (
             <div className="space-y-2">
               {filtrCli.map((c, i) => {
                 const vip = isVip(c);
@@ -331,6 +334,7 @@ const Catalogo = () => {
                 );
               })}
             </div>
+            )}
           </Card>
         </TabsContent>
       </Tabs>

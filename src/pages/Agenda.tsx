@@ -57,6 +57,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { BUSINESS_CONFIGS } from "@/lib/businessTypes";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ListSkeleton } from "@/components/skeletons";
 
 type Status = "pendente" | "confirmado" | "concluido" | "cancelado";
 
@@ -375,7 +376,7 @@ export default function Agenda() {
             {selectedDate.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
           </h2>
           {loading ? (
-            <p className="text-sm text-muted-foreground py-10 text-center">Carregando…</p>
+            <ListSkeleton rows={4} />
           ) : appointments.length === 0 ? (
             <div className="text-center py-10">
               <CalendarIcon className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
