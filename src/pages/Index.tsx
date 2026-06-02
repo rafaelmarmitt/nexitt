@@ -113,22 +113,11 @@ const Index = () => {
         supabase.from("sales").select("sold_at").eq("user_id", user.id).gte("sold_at", streakStart.toISOString()).order("sold_at", { ascending: false }),
       ]);
 
-      const hasReal = (salesMonth && salesMonth.length > 0) || (expensesMonth && expensesMonth.length > 0) || (customersCount ?? 0) > 0;
-      if (!hasReal) {
-        setValues(mockValues); setIsMock(true);
-        setAtividades(mockAtividades); setTopProdutos(mockTopProdutos);
-        setFluxo(fluxoCaixa); setSemanaData(semana); setSemanaTotal(4580);
-        setStreak(12);
-        return;
-      }
-
-      setIsMock(false);
-
       const fat = (salesMonth || []).reduce((s, v: any) => s + Number(v.total || 0), 0);
       const desp = (expensesMonth || []).reduce((s, v: any) => s + Number(v.amount || 0), 0);
       const ticket = salesMonth && salesMonth.length ? fat / salesMonth.length : 0;
       setValues({
-        ...mockValues,
+        ...EMPTY_VALUES,
         faturamento: fat,
         despesas: desp,
         lucro: fat - desp,
@@ -192,7 +181,7 @@ const Index = () => {
           _ts: new Date(e.expense_date).getTime(),
         })),
       ].sort((a: any, b: any) => b._ts - a._ts).slice(0, 6);
-      setAtividades(acts.length ? acts : mockAtividades);
+      setAtividades(acts);
 
       const prodMap: Record<string, { vendas: number; total: number }> = {};
       (items || []).forEach((it: any) => {
@@ -205,7 +194,7 @@ const Index = () => {
         .sort((a, b) => b[1].total - a[1].total)
         .slice(0, 4)
         .map(([nome, v], i) => ({ nome, vendas: v.vendas, total: v.total, cor: BAR_COLORS[i] }));
-      setTopProdutos(top.length ? top : mockTopProdutos);
+      setTopProdutos(top);
 
       const days = new Set((salesStreak || []).map((s: any) => new Date(s.sold_at).toDateString()));
       let st = 0;
