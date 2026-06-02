@@ -14,7 +14,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/CopyButton";
 import { NewCustomerDialog } from "@/components/NewCustomerDialog";
-import { MockBadge } from "@/components/MockBadge";
+
 import { useSupabaseTable } from "@/hooks/useSupabaseData";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -34,30 +34,13 @@ interface ClienteRow {
   last_purchase_at: string | null;
 }
 
-const PRODUTOS_MOCK: ProdutoRow[] = [
-  { id: "m1", name: "Bolo Decorado 1kg", price: 180, category: "Bolos", image_url: "🎂" },
-  { id: "m2", name: "Brigadeiro Gourmet (cento)", price: 90, category: "Doces", image_url: "🍫" },
-  { id: "m3", name: "Kit Festa Completo", price: 450, category: "Festas", image_url: "🎉" },
-  { id: "m4", name: "Doce de Leite (pote)", price: 35, category: "Doces", image_url: "🍯" },
-  { id: "m5", name: "Cupcake Personalizado", price: 12, category: "Doces", image_url: "🧁" },
-  { id: "m6", name: "Torta Holandesa", price: 95, category: "Bolos", image_url: "🥧" },
-];
-
-const CLIENTES_MOCK: ClienteRow[] = [
-  { id: "c1", name: "Maria Silva", phone: "(11) 99887-1122", total_spent: 1240, last_purchase_at: new Date().toISOString() },
-  { id: "c2", name: "João Pereira", phone: "(11) 98765-4321", total_spent: 450, last_purchase_at: null },
-  { id: "c3", name: "Ana Lima", phone: "(11) 97654-8899", total_spent: 720, last_purchase_at: null },
-  { id: "c4", name: "Carlos Souza", phone: "(11) 96543-7788", total_spent: 2180, last_purchase_at: null },
-  { id: "c5", name: "Beatriz Costa", phone: "(11) 95432-6677", total_spent: 290, last_purchase_at: null },
-];
-
 const Catalogo = () => {
   const { user } = useAuth();
-  const { data: produtos, isMock: produtosMock, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
-    "products", PRODUTOS_MOCK, { orderBy: { column: "created_at", ascending: false } }
+  const { data: produtos, refetch: refetchProdutos } = useSupabaseTable<ProdutoRow>(
+    "products", [], { orderBy: { column: "created_at", ascending: false } }
   );
-  const { data: clientes, isMock: clientesMock, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
-    "customers", CLIENTES_MOCK, { orderBy: { column: "total_spent", ascending: false } }
+  const { data: clientes, refetch: refetchClientes } = useSupabaseTable<ClienteRow>(
+    "customers", [], { orderBy: { column: "total_spent", ascending: false } }
   );
 
   const [open, setOpen] = useState(false);
@@ -166,10 +149,7 @@ const Catalogo = () => {
           <Card className="p-5 shadow-card">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
               <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-base font-bold">Catálogo</h2>
-                  <MockBadge show={produtosMock} />
-                </div>
+                <h2 className="text-base font-bold">Catálogo</h2>
                 <p className="text-xs text-muted-foreground">{filtrados.length} de {produtos.length} itens</p>
               </div>
               <div className="flex gap-2 items-center flex-1 sm:flex-initial sm:w-auto">
@@ -289,10 +269,7 @@ const Catalogo = () => {
           <Card className="p-5 shadow-card">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-base font-bold">Clientes</h2>
-                  <MockBadge show={clientesMock} />
-                </div>
+                <h2 className="text-base font-bold">Clientes</h2>
                 <p className="text-xs text-muted-foreground">Quem já comprou via bot</p>
               </div>
               <div className="flex gap-2 items-center flex-1 sm:flex-initial sm:w-auto">
