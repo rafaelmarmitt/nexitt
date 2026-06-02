@@ -93,6 +93,13 @@ export default function Estoque() {
       }
     >
 
+      {loading ? (
+        <>
+          <StatCardsSkeleton />
+          <ListSkeleton rows={6} />
+        </>
+      ) : (
+      <>
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card className="p-5 shadow-card">
@@ -176,6 +183,8 @@ export default function Estoque() {
           })}
         </ul>
       </Card>
+      </>
+      )}
     </DashboardLayout>
     </>
   );
