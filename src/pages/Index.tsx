@@ -308,13 +308,10 @@ const Index = () => {
               Seu negócio gerido pelo WhatsApp, visualizado aqui.
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <MockBadge show={isMock} />
-              {!isMock && (
-                <Badge className="bg-success-soft text-success-deep border-0 text-[10px]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse mr-1.5" />
-                  dados em tempo real
-                </Badge>
-              )}
+              <Badge className="bg-success-soft text-success-deep border-0 text-[10px]">
+                <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse mr-1.5" />
+                dados em tempo real
+              </Badge>
             </div>
           </div>
         </div>
