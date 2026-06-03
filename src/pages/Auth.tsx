@@ -22,7 +22,9 @@ export default function Auth() {
   // Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     if (!authLoading && user) {

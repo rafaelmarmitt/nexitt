@@ -367,7 +367,6 @@ export type Database = {
           user_id: string
           welcome_tour_completed: boolean
           whatsapp_bot_enabled: boolean
-          whatsapp_business_account_id: string | null
           whatsapp_connected_at: string | null
           whatsapp_onboarding_pending: boolean
           whatsapp_onboarding_sent_at: string | null
@@ -389,7 +388,6 @@ export type Database = {
           user_id: string
           welcome_tour_completed?: boolean
           whatsapp_bot_enabled?: boolean
-          whatsapp_business_account_id?: string | null
           whatsapp_connected_at?: string | null
           whatsapp_onboarding_pending?: boolean
           whatsapp_onboarding_sent_at?: string | null
@@ -411,7 +409,6 @@ export type Database = {
           user_id?: string
           welcome_tour_completed?: boolean
           whatsapp_bot_enabled?: boolean
-          whatsapp_business_account_id?: string | null
           whatsapp_connected_at?: string | null
           whatsapp_onboarding_pending?: boolean
           whatsapp_onboarding_sent_at?: string | null
