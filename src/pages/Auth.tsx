@@ -35,6 +35,10 @@ export default function Auth() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("As senhas não coincidem.");
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
