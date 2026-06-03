@@ -178,6 +178,13 @@ export default function Auth() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
+                    <Label htmlFor="signup-phone" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Telefone (WhatsApp)</Label>
+                    <div className="relative group">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="signup-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-0000" required className="pl-10 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
                     <Label htmlFor="signup-pwd" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Senha</Label>
                     <div className="relative group">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -185,6 +192,13 @@ export default function Auth() {
                       <button type="button" aria-label={showPwd ? "Ocultar senha" : "Mostrar senha"} onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                         {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="signup-pwd2" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Confirmar senha</Label>
+                    <div className="relative group">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input id="signup-pwd2" type={showPwd ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha" required minLength={6} className="pl-10 h-12 rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20" />
                     </div>
                   </div>
                   <Button type="submit" variant="hero" size="lg" disabled={loading} className="w-full mt-2 h-12 rounded-xl text-base font-semibold group">
