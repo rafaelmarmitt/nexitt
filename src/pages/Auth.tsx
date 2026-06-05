@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2, Mail, Lock, User, Sparkles, Eye, EyeOff, ArrowRight, CheckCircle2 } from "lucide-react";
 import mascot from "@/assets/mascot.png";
+import { normalizeBrPhone } from "@/lib/phone";
 
 export default function Auth() {
   const navigate = useNavigate();
