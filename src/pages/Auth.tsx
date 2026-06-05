@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2, Mail, Lock, User, Sparkles, Eye, EyeOff, ArrowRight, CheckCircle2 } from "lucide-react";
 import mascot from "@/assets/mascot.png";
+import { normalizeBrPhone } from "@/lib/phone";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function Auth() {
       toast.error("As senhas não coincidem.");
       return;
     }
+    const normalizedPhone = normalizeBrPhone(phone);
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
@@ -46,7 +48,7 @@ export default function Auth() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: { full_name: fullName, phone },
+          data: { full_name: fullName, phone: normalizedPhone },
         },
       });
       if (error) {
